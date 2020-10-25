@@ -1,8 +1,10 @@
-#ifndef GAMEASSETSDB_SRC_QUERIES_QUERIES_HPP_
-#define GAMEASSETSDB_SRC_QUERIES_QUERIES_HPP_
+#ifndef GAS_SRC_QUERIES_QUERIES_HPP_
+#define GAS_SRC_QUERIES_QUERIES_HPP_
 
 #include <concepts>
 #include <string>
+#include <functional>
+#include <numeric>
 
 using namespace std::literals::string_literals;
 
@@ -98,17 +100,18 @@ struct condition {
 
 template<is_table Table>
 struct where {
-  where(is_logical auto logic, std::vector<condition<Table>>  conditions) {
+  where() = default;
+  where(is_logical auto logic, std::vector<condition<Table>> conditions) {
     result_ = std::accumulate(std::next(std::begin(conditions)),
-                                           std::end(conditions),
-                                           std::invoke(*std::begin(conditions)),
-                                           [&](const auto &item1, const auto &item2) {
-                                             return item1 + " " + std::invoke(logic) + " " + std::invoke(item2);
-                                           });
+                              std::end(conditions),
+                              std::invoke(*std::begin(conditions)),
+                              [&](const auto &item1, const auto &item2) {
+                                return item1 + " " + std::invoke(logic) + " " + std::invoke(item2);
+                              });
   }
   [[nodiscard]] inline auto operator()() const -> std::string { return result_; }
  private:
-  std::string result_;
+  std::string result_{};
 };
 
 template<is_table ... Tables>
@@ -116,31 +119,47 @@ struct group_by {
   explicit group_by(columns<Tables...> columns) { result_ = " group by "s + columns.combine(); }
   [[nodiscard]] inline auto operator()() const -> std::string { return result_; }
  private:
-  std::string result_;
+  std::string result_{};
 };
 
 template<is_table ... Tables>
 struct select {
   explicit select(columns<Tables> ... columns) {
-    result_ = "select "s + std::invoke(columns ...)  + " from " + std::invoke(Tables{} ...);
+    result_ = "select "s + ((std::invoke(columns) + ", "s) + ...) + " from " + ((std::invoke(Tables{}) + ", "s) + ...);
   }
   [[nodiscard]] inline auto operator()() const -> std::string {
     return result_;
+    // query<ColTypes ...>(result_);
   }
   auto &where(where<Tables> ... where) {
-    result_ += " where "s + std::invoke(where ...);
+    result_ += " where "s + (std::invoke(where) + ...);
     return *this;
   }
   template<is_table ... T>
-  auto& group_by(group_by<T> ... group_by) {
+  auto &group_by(group_by<T> ... group_by) {
     result_ += std::invoke(group_by ...);
     return *this;
   }
  private:
-  std::string result_;
+  std::string result_{};
 };
 
-template <is_table Table>
+//template<is_column Column>
+//struct con {
+//  con(is_predicate auto predicate) : result_(std::invoke(predicate, std::invoke(Column{}))) {}
+//  [[nodiscard]] inline auto operator()() const -> std::string { return result_; }
+// private:
+//  std::string result_;
+//};
+//
+//template <is_column ... Columns>
+//struct sel {
+//  sel() = default;
+//  template<is_logical logical, is_predicate ... Predicates>
+//  auto where(Predicates ... predicates) { return (std::invoke(con<Columns>(predicates)) + ...); }
+//};
+
+template<is_table Table>
 struct update {
   explicit update() {
     result_ = "update " + std::invoke(Table{});
@@ -148,7 +167,7 @@ struct update {
   [[nodiscard]] inline auto operator()() const -> std::string {
     return result_;
   }
-  template <is_column_of_table<Table> Column>
+  template<is_column_of_table<Table> Column>
   auto &set(typename Column::field_type value) {
     if constexpr (std::is_convertible_v<typename Column::field_type, std::string>)
       result_ += " set " + std::invoke(Column{}) + " = " + value;
@@ -164,6 +183,11 @@ struct update {
   std::string result_;
 };
 
-} // namespace ga
+//template<typename ... Types>
+//struct query {
+//  query(std::string sql);
+//};
 
-#endif //GAMEASSETSDB_SRC_QUERIES_QUERIES_HPP_
+}; // namespace gas
+
+#endif //GAS_SRC_QUERIES_QUERIES_HPP_

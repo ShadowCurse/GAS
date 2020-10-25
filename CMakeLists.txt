@@ -3,11 +3,14 @@ project(GameAssetsDB)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(GameAssetsDB src/main.cpp
-                            src/database/db_connector.cpp
-                            src/database/db_connector.hpp
-                            src/sql/queries.hpp
-                            src/sql/tables.hpp
-                            src/core/core.cpp
-                            src/core/core.hpp)
-target_link_libraries(GameAssetsDB PRIVATE pqxx pq)
+add_executable(GAS src/main.cpp
+        src/database/db_connector.cpp
+        src/database/db_connector.hpp
+        src/sql/query.hpp
+        src/sql/table.hpp
+        src/core/core.cpp
+        src/core/core.hpp src/core/tables.hpp src/core/query_collection.hpp)
+
+target_include_directories(GAS PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+target_link_libraries(GAS PRIVATE pqxx pq)

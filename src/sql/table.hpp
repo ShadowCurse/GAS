@@ -1,18 +1,19 @@
-#ifndef GAMEASSETSDB_SRC_SQL_TABLES_HPP_
-#define GAMEASSETSDB_SRC_SQL_TABLES_HPP_
+#ifndef GAS_SRC_SQL_TABLES_HPP_
+#define GAS_SRC_SQL_TABLES_HPP_
 
+#include <string>
 #include <string_view>
 
 using namespace std::literals::string_literals;
 
 namespace gas {
 
-auto all() {
-  return "*"s;
-};
+//auto all() {
+//  return "*"s;
+//};
 
 #define MARK_AS_TABLE(table) \
-using table_class = table; \
+using table_class = table;   \
 auto operator()() { return std::string(#table); }
 
 #define TABLE_FIELD(name, type) \
@@ -22,6 +23,6 @@ struct name { \
   auto operator()() { return std::string(#name); }; \
 };
 
-} // namespace ga
+} // namespace gas
 
-#endif //GAMEASSETSDB_SRC_SQL_TABLES_HPP_
+#endif //GAS_SRC_SQL_TABLES_HPP_

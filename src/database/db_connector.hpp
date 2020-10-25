@@ -5,31 +5,32 @@
 #include <sstream>
 #include <utility>
 #include <pqxx/pqxx>
+#include <pqxx/notification>
 #include <iostream>
 
 namespace gas {
 
-class settings {
+class Settings {
  public:
-  settings() = default;
+  Settings() = default;
 
-  auto host(std::string host) -> settings & {
+  auto host(std::string host) -> Settings & {
     host_ = std::move(host);
     return *this;
   }
-  auto port(size_t port) -> settings & {
+  auto port(size_t port) -> Settings & {
     port_ = port;
     return *this;
   }
-  auto db_name(std::string db_name) -> settings & {
+  auto db_name(std::string db_name) -> Settings & {
     db_name_ = std::move(db_name);
     return *this;
   }
-  auto username(std::string username) -> settings & {
+  auto username(std::string username) -> Settings & {
     username_ = std::move(username);
     return *this;
   }
-  auto password(std::string password) -> settings & {
+  auto password(std::string password) -> Settings & {
     password_ = std::move(password);
     return *this;
   }
@@ -52,21 +53,35 @@ class settings {
   std::string password_{};
 };
 
-class connector {
+class Notifier final : public pqxx::notification_receiver {
  public:
-  connector() = default;
-  bool connect(const settings &settings) {
-    settings_ = settings;
+  Notifier(pqxx::connection &connector, const std::string &channel) : pqxx::notification_receiver(connector,
+                                                                                                  channel) {}
+  void operator()(std::string const &payload, int backend_pid) final {}
+};
+
+class Connector {
+ public:
+  Connector() = default;
+  explicit Connector(Settings settings) : settings_(std::move(settings)) {}
+  void set_settings(Settings settings) { settings_ = std::move(settings); }
+  bool connect() {
     try {
-      connection_ = std::make_unique<pqxx::connection>(settings.to_string());
+      connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
     }
     catch (std::exception const &e) {
       return false;
     }
     return true;
   }
-
-  auto exec(const std::string &sql) -> std::optional<pqxx::result> {
+  bool connect(const Settings &settings) {
+    settings_ = settings;
+    return connect();
+  }
+  void add_notifier(const std::string &channel) {
+    notifiers_.emplace_back(*connection_, channel);
+  }
+  [[nodiscard]] auto exec(const std::string &sql) const -> std::optional<pqxx::result> {
     pqxx::result result;
     try {
       pqxx::work work(*connection_);
@@ -78,10 +93,11 @@ class connector {
   }
 
  private:
-  settings settings_{};
+  Settings settings_{};
   std::unique_ptr<pqxx::connection> connection_;
+  std::vector<Notifier> notifiers_;
 };
 
-} // namespace ga
+} // namespace gas
 
 #endif //GAMEASSETSDB_SRC_DATABASE_DB_CONNECTOR_HPP_

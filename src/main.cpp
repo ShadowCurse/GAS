@@ -1,7 +1,7 @@
 #include <iostream>
 #include "database/db_connector.hpp"
-#include "sql/queries.hpp"
-#include "sql/tables.hpp"
+#include "sql/query.hpp"
+#include "sql/table.hpp"
 
 using namespace gas;
 
@@ -25,26 +25,24 @@ struct dev_role {
 auto main() -> int {
 
   auto settings =
-      gas::settings{}
+      gas::Settings{}
           .host("localhost")
           .port(5432)
           .db_name("game_assets")
           .username("username")
           .password("password");
-  connector connector;
+  Connector connector;
   try {
     if (connector.connect(settings)) {
-      auto query = gas::select(columns<resource>{resource::name{}})
+      auto select = gas::select(columns<resource>{resource::name{}},columns<dev_role>{dev_role::id{}})
           .where(
               {logical::AND{},
                {condition<resource>{resource::type{},
-                                    eq{5}}
-               }
-              }
+                                    eq{5}}}
+              }, {}
           );
-
-      std::cout << query() << '\n';
-      if (auto res = connector.exec(query())) {
+      std::cout << select() << '\n';
+      if (auto res = connector.exec(select())) {
         std::cout << "Found " << (*res).size() << " meshes:\n";
         for (auto[name] : res->iter<std::string>()) {
           std::cout << name << '\n';
