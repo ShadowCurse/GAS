@@ -1,25 +1,18 @@
 #include <iostream>
 #include "database/db_connector.hpp"
 #include "sql/query.hpp"
-#include "sql/table.hpp"
+#include <tuple>
 
 using namespace gas;
 
-struct resource {
-  MARK_AS_TABLE(resource)
-  TABLE_FIELD(id, int)
-  TABLE_FIELD(name, std::string)
-  TABLE_FIELD(description, std::string)
-  TABLE_FIELD(size, int)
-  TABLE_FIELD(checksum, int)
-  TABLE_FIELD(type, int)
-  TABLE_FIELD(data, std::string)
-};
-
-struct dev_role {
-  MARK_AS_TABLE(dev_role)
-  TABLE_FIELD(id, int)
-  TABLE_FIELD(role, std::string)
+struct dev_info {
+  explicit dev_info(const std::tuple<int, std::string, int, int>& args) {
+    std::tie(id, name, age, role) = args;
+  }
+  int id{};
+  std::string name;
+  int age{};
+  int role{};
 };
 
 auto main() -> int {
@@ -34,19 +27,12 @@ auto main() -> int {
   Connector connector;
   try {
     if (connector.connect(settings)) {
-      auto select = gas::select(columns<resource>{resource::name{}},columns<dev_role>{dev_role::id{}})
-          .where(
-              {logical::AND{},
-               {condition<resource>{resource::type{},
-                                    eq{5}}}
-              }, {}
-          );
-      std::cout << select() << '\n';
-      if (auto res = connector.exec(select())) {
+      auto q = query<int ,std::string, int, int>(std::string("select * from DeveloperInfo;"));
+      if (auto res = connector.exec(q)) {
         std::cout << "Found " << (*res).size() << " meshes:\n";
-        for (auto[name] : res->iter<std::string>()) {
-          std::cout << name << '\n';
-        }
+        auto values = res->cast<dev_info>();
+        for (const auto& v: values)
+          std::cout << "name = " << v.name << '\n';
       } else {
         std::cout << "Nothing was found\n";
       }

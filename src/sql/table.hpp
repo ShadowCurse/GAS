@@ -3,14 +3,22 @@
 
 #include <string>
 #include <string_view>
+#include <concepts>
 
 using namespace std::literals::string_literals;
 
 namespace gas {
 
-//auto all() {
-//  return "*"s;
-//};
+template<typename T>
+concept is_table = requires(T t) {{ std::invoke(t) } -> std::same_as<std::string>; }
+    && std::is_class_v<typename T::table_class>;
+
+template<typename T>
+concept is_column = std::is_class_v<typename T::parent_table>;
+
+template<typename Column, typename Table>
+concept is_column_of_table = is_table<Table> && is_column<Column>
+    && std::is_same_v<typename Table::table_class, typename Column::parent_table>;
 
 #define MARK_AS_TABLE(table) \
 using table_class = table;   \

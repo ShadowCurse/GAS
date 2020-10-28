@@ -5,24 +5,19 @@
 
 namespace gas {
 
-#define ADD_DELETE(name) \
-  auto add_##name() -> bool; \
-  auto delete_##name() -> bool;
-
 class Core {
+ public:
+  using callback_fn = Notifier::callback_fn;
+
+ public:
   Core() = default;
 
   auto set_connection_settings(Settings settings) -> void;
   auto connect() -> bool;
 
-  ADD_DELETE(project)
-  ADD_DELETE(developer)
-  ADD_DELETE(developer_info)
-  ADD_DELETE(role)
-  ADD_DELETE(commit)
-  ADD_DELETE(resource_type)
-  ADD_DELETE(dependency)
-  ADD_DELETE(resource)
+  auto add_project() -> bool;
+  auto get_project() -> bool;
+  auto delete_project() -> bool;
 
   auto get_resource_tree();
   auto get_commit_history();

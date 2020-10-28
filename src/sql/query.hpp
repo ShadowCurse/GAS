@@ -5,21 +5,18 @@
 #include <string>
 #include <functional>
 #include <numeric>
+#include <utility>
+#include "table.hpp"
 
 using namespace std::literals::string_literals;
 
 namespace gas {
 
-template<typename T>
-concept is_table = requires(T t) {{ std::invoke(t) } -> std::same_as<std::string>; }
-    && std::is_class_v<typename T::table_class>;
-
-template<typename T>
-concept is_column = std::is_class_v<typename T::parent_table>;
-
-template<typename Column, typename Table>
-concept is_column_of_table = is_table<Table> && is_column<Column>
-    && std::is_same_v<typename Table::table_class, typename Column::parent_table>;
+template<typename ... T>
+struct query {
+  explicit query(std::string query) :sql(std::move(query)) {}
+  std::string sql;
+};
 
 #define PREDICATE(name, operation)     \
   template <typename T> \
@@ -40,6 +37,7 @@ PREDICATE(gt, >)
 PREDICATE(ge, >=)
 PREDICATE(lt, <)
 PREDICATE(le, <=)
+
 template<typename T>
 struct between {
   using is_pred = between;
