@@ -1,7 +1,7 @@
 #ifndef GAS_SRC_CORE_CORE_HPP_
 #define GAS_SRC_CORE_CORE_HPP_
 
-#include "database/db_connector.hpp"
+#include "utility/db_connector.hpp"
 
 namespace gas {
 

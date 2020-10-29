@@ -1,7 +1,6 @@
 #include "core.hpp"
 
 #include <utility>
-#include "query_collection.hpp"
 
 namespace gas {
 

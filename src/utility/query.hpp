@@ -18,6 +18,10 @@ struct query {
   std::string sql;
 };
 
+////////////////////////
+/// currently unused ///
+////////////////////////
+
 #define PREDICATE(name, operation)     \
   template <typename T> \
   struct name {\
@@ -142,21 +146,6 @@ struct select {
   std::string result_{};
 };
 
-//template<is_column Column>
-//struct con {
-//  con(is_predicate auto predicate) : result_(std::invoke(predicate, std::invoke(Column{}))) {}
-//  [[nodiscard]] inline auto operator()() const -> std::string { return result_; }
-// private:
-//  std::string result_;
-//};
-//
-//template <is_column ... Columns>
-//struct sel {
-//  sel() = default;
-//  template<is_logical logical, is_predicate ... Predicates>
-//  auto where(Predicates ... predicates) { return (std::invoke(con<Columns>(predicates)) + ...); }
-//};
-
 template<is_table Table>
 struct update {
   explicit update() {
@@ -180,11 +169,6 @@ struct update {
  private:
   std::string result_;
 };
-
-//template<typename ... Types>
-//struct query {
-//  query(std::string sql);
-//};
 
 }; // namespace gas
 

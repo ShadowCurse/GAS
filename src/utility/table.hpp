@@ -9,6 +9,22 @@ using namespace std::literals::string_literals;
 
 namespace gas {
 
+/////////////////////
+/// Example table ///
+/////////////////////
+//namespace table_name {
+// struct table_name {
+//   explicit table_name(const std::tuple<types ...> &args) {
+//     std::tie(fields ...) = args;
+//   }
+//   fields ...
+// };
+// } // namespace table_name
+
+////////////////////////
+/// currently unused ///
+////////////////////////
+
 template<typename T>
 concept is_table = requires(T t) {{ std::invoke(t) } -> std::same_as<std::string>; }
     && std::is_class_v<typename T::table_class>;

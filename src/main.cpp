@@ -1,21 +1,13 @@
 #include <iostream>
-#include "database/db_connector.hpp"
-#include "sql/query.hpp"
-#include <tuple>
+#include "utility/db_connector.hpp"
+#include "core/tables.hpp"
+#include "core/query_collection.hpp"
 
 using namespace gas;
 
-struct dev_info {
-  explicit dev_info(const std::tuple<int, std::string, int, int>& args) {
-    std::tie(id, name, age, role) = args;
-  }
-  int id{};
-  std::string name;
-  int age{};
-  int role{};
-};
-
 auto main() -> int {
+
+  auto query = dev::get_named("Dev1");
 
   auto settings =
       gas::Settings{}
@@ -27,10 +19,9 @@ auto main() -> int {
   Connector connector;
   try {
     if (connector.connect(settings)) {
-      auto q = query<int ,std::string, int, int>(std::string("select * from DeveloperInfo;"));
-      if (auto res = connector.exec(q)) {
-        std::cout << "Found " << (*res).size() << " meshes:\n";
-        auto values = res->cast<dev_info>();
+      if (auto res = connector.exec(query)) {
+        std::cout << "Found " << (*res).size() << ":\n";
+        auto values = res->cast<dev::dev_info>();
         for (const auto& v: values)
           std::cout << "name = " << v.name << '\n';
       } else {

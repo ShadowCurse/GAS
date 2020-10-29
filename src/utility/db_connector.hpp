@@ -7,7 +7,7 @@
 #include <pqxx/pqxx>
 #include <pqxx/notification>
 #include <iostream>
-#include "sql/query.hpp"
+#include "query.hpp"
 
 namespace gas {
 
@@ -15,23 +15,23 @@ class Settings {
  public:
   Settings() = default;
 
-  auto host(std::string host) -> Settings & {
+  [[nodiscard]] auto host(std::string host) -> Settings & {
     host_ = std::move(host);
     return *this;
   }
-  auto port(size_t port) -> Settings & {
+  [[nodiscard]] auto port(size_t port) -> Settings & {
     port_ = port;
     return *this;
   }
-  auto db_name(std::string db_name) -> Settings & {
+  [[nodiscard]] auto db_name(std::string db_name) -> Settings & {
     db_name_ = std::move(db_name);
     return *this;
   }
-  auto username(std::string username) -> Settings & {
+  [[nodiscard]] auto username(std::string username) -> Settings & {
     username_ = std::move(username);
     return *this;
   }
-  auto password(std::string password) -> Settings & {
+  [[nodiscard]] auto password(std::string password) -> Settings & {
     password_ = std::move(password);
     return *this;
   }
@@ -47,11 +47,11 @@ class Settings {
   }
 
  private:
-  std::string host_{};
-  size_t port_{};
-  std::string db_name_{};
-  std::string username_{};
-  std::string password_{};
+  std::string host_;
+  size_t port_;
+  std::string db_name_;
+  std::string username_;
+  std::string password_;
 };
 
 class Notifier final : public pqxx::notification_receiver {
@@ -69,10 +69,10 @@ class Notifier final : public pqxx::notification_receiver {
                                     channel_(other.channel_),
                                     callback_(other.callback_) {}
 
-  Notifier(Notifier &&other) noexcept : pqxx::notification_receiver(other.connector_, other.channel_),
-                               connector_(other.connector_),
-                               channel_(std::move(other.channel_)),
-                               callback_(std::move(other.callback_)) {}
+  Notifier(Notifier &&other) noexcept: pqxx::notification_receiver(other.connector_, other.channel_),
+                                       connector_(other.connector_),
+                                       channel_(std::move(other.channel_)),
+                                       callback_(std::move(other.callback_)) {}
 
   void operator()(std::string const &payload, int backend_pid) final { callback_(payload); }
  private:
@@ -84,7 +84,7 @@ class Notifier final : public pqxx::notification_receiver {
 template<typename ... Types>
 class Result {
  public:
-  explicit Result(pqxx::result result) : result_(std::move(result)) {}
+  explicit Result(const pqxx::result &result) : result_(result) {}
   [[nodiscard]] auto size() const { return result_.size(); }
 
   template<typename T>
@@ -96,7 +96,7 @@ class Result {
       for (auto pack : iter) {
         values.emplace_back(pack);
       }
-    } catch (std::exception const & e) {
+    } catch (std::exception const &e) {
       std::cerr << "Caught exception: " << e.what() << '\n';
     }
     return values;
@@ -160,7 +160,7 @@ class Connector {
   }
 
  private:
-  Settings settings_{};
+  Settings settings_;
   std::unique_ptr<pqxx::connection> connection_;
   std::vector<Notifier> notifiers_;
 };
