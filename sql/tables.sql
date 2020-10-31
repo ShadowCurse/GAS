@@ -1,41 +1,26 @@
-                                                                     create table DeveloperRole
+--################## Creating tables ########################
+create table logs
 (
-    id   int generated always as identity primary key not null,
-    role text                                         not null
+    id          int generated always as identity primary key not null,
+    date        timestamp                                    not null,
+    description text                                         not null
 );
 
-create table DeveloperInfo
-(
-    id   int        generated always as identity primary key not null,
-    name text                                                not null,
-    age  int                                                 not null,
-    role int                                                 not null,
-    foreign key (role) references DeveloperRole (id) on delete cascade
-);
-
-create table Project
+create table developer
 (
     id          int generated always as identity primary key not null,
     name        text                                         not null,
-    description text
+    email       text                                         not null,
+    description text                                         not null
 );
 
-create table Developer
-(
-    id       int         generated always as identity primary key not null,
-    dev_info int                                                  not null,
-    project  int                                                  not null,
-    foreign key (dev_info) references DeveloperInfo (id) on delete cascade,
-    foreign key (project) references Project (id)        on delete cascade
-);
-
-create table ResourceType
+create table resourcetype
 (
     id   int generated always as identity primary key not null,
     name text                                         not null
 );
 
-create table Resource
+create table resource
 (
     id          int generated always as identity primary key not null,
     name        text                                         not null,
@@ -44,25 +29,34 @@ create table Resource
     checksum    uuid                                         not null,
     type        int                                          not null,
     data        oid                                          not null,
-    foreign key (type) references ResourceType (id)  on delete cascade
+    foreign key (type) references resourcetype (id) on delete cascade
 );
 
-create table Dependency
+create table dependency
 (
-    id                  int     generated always as identity primary key not null,
-    requesting_resource int                                              not null,
-    required_resource   int                                              not null,
-    foreign key (requesting_resource) references Resource (id)  on delete cascade,
-    foreign key (required_resource) references Resource (id)    on delete cascade
+    id                  int generated always as identity primary key not null,
+    requesting_resource int                                          not null,
+    required_resource   int                                          not null,
+    foreign key (requesting_resource) references resource (id) on delete cascade,
+    foreign key (required_resource) references resource (id) on delete cascade
 );
 
-create table Commits
+create table commits
 (
-    id       int   generated always as identity primary key not null,
-    dev      int                                            not null,
-    resource int                                            not null,
-    date     timestamp                                      not null,
+    id       int generated always as identity primary key not null,
+    dev      int                                          not null,
+    resource int                                          not null,
+    date     timestamp                                    not null,
     message  text,
-    foreign key (dev) references Developer (id)    on delete cascade,
-    foreign key (resource) references Resource (id) on delete cascade
+    foreign key (dev) references developer (id) on delete cascade,
+    foreign key (resource) references resource (id) on delete cascade
 );
+
+--################## Deleting tables ########################
+
+drop table commits;
+drop table dependency;
+drop table resource;
+drop table resourcetype;
+drop table developer;
+drop table logs;
