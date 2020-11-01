@@ -1,12 +1,13 @@
-#ifndef GAMEASSETSDB_SRC_DATABASE_DB_CONNECTOR_HPP_
-#define GAMEASSETSDB_SRC_DATABASE_DB_CONNECTOR_HPP_
+#ifndef GAMEASSETSDB_SRC_UTILITY_DB_CONNECTOR_HPP_
+#define GAMEASSETSDB_SRC_UTILITY_DB_CONNECTOR_HPP_
 
-#include <string>
-#include <sstream>
-#include <utility>
-#include <pqxx/pqxx>
-#include <pqxx/notification>
 #include <iostream>
+#include <pqxx/notification>
+#include <pqxx/pqxx>
+#include <sstream>
+#include <string>
+#include <utility>
+
 #include "query.hpp"
 
 namespace gas {
@@ -38,17 +39,15 @@ class Settings {
 
   [[nodiscard]] auto to_string() const -> std::string {
     std::stringstream ss{};
-    ss << " host=" << host_
-       << " port=" << std::to_string(port_)
-       << " dbname=" << db_name_
-       << " user=" << username_
+    ss << " host=" << host_ << " port=" << std::to_string(port_)
+       << " dbname=" << db_name_ << " user=" << username_
        << " password=" << password_;
     return ss.str();
   }
 
  private:
   std::string host_;
-  size_t port_;
+  size_t port_{};
   std::string db_name_;
   std::string username_;
   std::string password_;
@@ -57,42 +56,49 @@ class Settings {
 class Notifier final : public pqxx::notification_receiver {
  public:
   using callback_fn = std::function<void(std::string const &)>;
+
  public:
-  Notifier(pqxx::connection &connector, const std::string &channel, callback_fn callback)
+  Notifier(pqxx::connection &connector, const std::string &channel,
+           callback_fn callback)
       : pqxx::notification_receiver(connector, channel),
         connector_(connector),
         channel_(channel),
         callback_(std::move(callback)) {}
   ~Notifier() final = default;
-  Notifier(const Notifier &other) : pqxx::notification_receiver(other.connector_, other.channel_),
-                                    connector_(other.connector_),
-                                    channel_(other.channel_),
-                                    callback_(other.callback_) {}
+  Notifier(const Notifier &other)
+      : pqxx::notification_receiver(other.connector_, other.channel_),
+        connector_(other.connector_),
+        channel_(other.channel_),
+        callback_(other.callback_) {}
 
-  Notifier(Notifier &&other) noexcept: pqxx::notification_receiver(other.connector_, other.channel_),
-                                       connector_(other.connector_),
-                                       channel_(std::move(other.channel_)),
-                                       callback_(std::move(other.callback_)) {}
+  Notifier(Notifier &&other) noexcept
+      : pqxx::notification_receiver(other.connector_, other.channel_),
+        connector_(other.connector_),
+        channel_(std::move(other.channel_)),
+        callback_(std::move(other.callback_)) {}
 
-  void operator()(std::string const &payload, int backend_pid) final { callback_(payload); }
+  void operator()(std::string const &payload, int backend_pid) final {
+    callback_(payload);
+  }
+
  private:
   pqxx::connection &connector_;
   std::string channel_;
   callback_fn callback_;
 };
 
-template<typename ... Types>
+template <typename... Types>
 class Result {
  public:
   explicit Result(const pqxx::result &result) : result_(result) {}
   [[nodiscard]] auto size() const { return result_.size(); }
 
-  template<typename T>
-  requires std::is_constructible_v<T, std::tuple<Types ...>>
-  auto cast() -> std::vector<T> {
+  template <typename T>
+  requires std::is_constructible_v<T, std::tuple<Types...>> auto cast()
+      -> std::vector<T> {
     std::vector<T> values;
     try {
-      auto iter = result_.iter<Types ...>();
+      auto iter = result_.iter<Types...>();
       for (auto pack : iter) {
         values.emplace_back(pack);
       }
@@ -115,13 +121,14 @@ class Connector {
   explicit Connector(Settings settings) : settings_(std::move(settings)) {}
 
   void set_settings(Settings settings) { settings_ = std::move(settings); }
-  [[nodiscard]] auto get_settings() const -> const Settings & { return settings_; }
+  [[nodiscard]] auto get_settings() const -> const Settings & {
+    return settings_;
+  }
 
   bool connect() {
     try {
       connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
-    }
-    catch (std::exception const &e) {
+    } catch (std::exception const &e) {
       return false;
     }
     return true;
@@ -130,24 +137,13 @@ class Connector {
     settings_ = settings;
     return connect();
   }
-  void add_notifier(const std::string &channel, notification_callback callback) {
+  void add_notifier(const std::string &channel,
+                    notification_callback callback) {
     notifiers_.emplace_back(*connection_, channel, std::move(callback));
   }
 
-  [[nodiscard]] auto exec(const std::string &sql) const -> std::optional<pqxx::result> {
-    pqxx::result result;
-    try {
-      pqxx::work work(*connection_);
-      result = work.exec(sql);
-    } catch (std::exception const &e) {
-      std::cerr << "Caught exception: " << e.what() << '\n';
-      return std::nullopt;
-    }
-    return result;
-  }
-
-  template<typename ... T>
-  auto exec(query<T...> query) -> std::optional<Result<T ...>> {
+  template <typename... T>
+  auto exec(Query<T...> query) -> std::optional<Result<T...>> {
     pqxx::result result;
     try {
       pqxx::work work(*connection_);
@@ -165,6 +161,6 @@ class Connector {
   std::vector<Notifier> notifiers_;
 };
 
-} // namespace gas
+}  // namespace gas
 
-#endif //GAMEASSETSDB_SRC_DATABASE_DB_CONNECTOR_HPP_
+#endif  // GAMEASSETSDB_SRC_UTILITY_DB_CONNECTOR_HPP_

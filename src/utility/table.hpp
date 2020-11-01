@@ -1,5 +1,5 @@
-#ifndef GAS_SRC_SQL_TABLES_HPP_
-#define GAS_SRC_SQL_TABLES_HPP_
+#ifndef GAMEASSETSDB_SRC_UTILITY_TABLE_HPP_
+#define GAMEASSETSDB_SRC_UTILITY_TABLE_HPP_
 
 #include <string>
 #include <string_view>
@@ -49,4 +49,4 @@ struct name { \
 
 } // namespace gas
 
-#endif //GAS_SRC_SQL_TABLES_HPP_
+#endif  // GAMEASSETSDB_SRC_UTILITY_TABLE_HPP_

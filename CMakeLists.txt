@@ -15,7 +15,7 @@ add_executable(GAS src/main.cpp
         src/core/core.cpp
         src/core/core.hpp
         src/core/tables.hpp
-        src/core/query_collection.hpp)
+        )
 
 target_include_directories(GAS PRIVATE ${CMAKE_SOURCE_DIR}/src)
 

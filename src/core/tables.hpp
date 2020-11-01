@@ -1,62 +1,55 @@
 #ifndef GAS_SRC_CORE_TABLES_HPP_
 #define GAS_SRC_CORE_TABLES_HPP_
 
+#include <fmt/format.h>
+
 #include <tuple>
+
+#include "utility/query.hpp"
 
 namespace gas {
 
-namespace role {
-struct role_info {
-  explicit role_info(const std::tuple<int, std::string> &args) {
-    std::tie(id, name) = args;
-  }
-  int id{};
-  std::string name;
-};
-} // namespace role
+struct Developer {
+  using developer_query = Query<int, std::string, std::string, std::string>;
 
-namespace project {
-struct project_info {
-  explicit project_info(const std::tuple<int, std::string, std::string> &args) {
-    std::tie(id, name, description) = args;
+  explicit Developer(const std::tuple<int, std::string, std::string, std::string> &args) {
+    std::tie(id, name, email, description) = args;
   }
+
+  [[nodiscard]] static auto get_all() {
+    return developer_query("select * from developer;");
+  }
+  [[nodiscard]] static auto get_named(const std::string &name) {
+    return developer_query(
+        fmt::format("select * from developer where name = '{}'", name));
+  }
+
   int id{};
   std::string name;
+  std::string email;
   std::string description;
 };
-} // namespace project
 
-namespace dev {
-struct dev_info {
-  explicit dev_info(const std::tuple<int, std::string, int, int> &args) {
-    std::tie(id, name, age, role) = args;
+struct ResourceType {
+  using resourcetype_query = Query<int, std::string>;
+
+  explicit ResourceType(const std::tuple<int, std::string> &args) {
+    std::tie(id, name) = args;
   }
+
   int id{};
   std::string name;
-  int age{};
-//  int project{};
-  int role{};
 };
-} // namespace dev
 
-namespace commit {
-struct commit_info {
-  explicit commit_info(const std::tuple<int, int, int, std::string, std::string> &args) {
-    std::tie(id, dev, resource, date, message) = args;
-  }
-  int id{};
-  int dev{};
-  int resource{};
-  std::string date;
-  std::string message;
-};
-} // namespace commit
+struct Resource {
+  using resource_query =
+  Query<int, std::string, std::string, int, int, int>;
 
-namespace resource {
-struct resource_info {
-  explicit resource_info(const std::tuple<int, std::string, std::string, int, int, int> &args) {
+  explicit Resource(
+      const std::tuple<int, std::string, std::string, int, int, int> &args) {
     std::tie(id, name, description, size, checksum, type) = args;
   }
+
   int id{};
   std::string name;
   std::string description;
@@ -64,29 +57,34 @@ struct resource_info {
   int checksum{};
   int type{};
 };
-} // namespace resource
 
-namespace dependency {
-struct dependency_info {
-  explicit dependency_info(const std::tuple<int, int, int> &args) {
+struct Dependency {
+  using dependency_query = Query<int, int, int>;
+
+  explicit Dependency(const std::tuple<int, int, int> &args) {
     std::tie(id, requesting_resource, required_resource) = args;
   }
+
   int id{};
   int requesting_resource{};
   int required_resource{};
 };
-} // namespace dependency
 
-namespace resource_type {
-struct resource_type_info {
-  explicit resource_type_info(const std::tuple<int, std::string> &args) {
-    std::tie(id, name) = args;
+struct Commit {
+  using commit_query = Query<int, int, int, std::string, std::string>;
+
+  explicit Commit(
+      const std::tuple<int, int, int, std::string, std::string> &args) {
+    std::tie(id, dev, resource, date, message) = args;
   }
+
   int id{};
-  std::string name;
+  int dev{};
+  int resource{};
+  std::string date;
+  std::string message;
 };
-} // namespace resource_type
 
-} // namespace gas
+}  // namespace gas
 
-#endif //GAS_SRC_CORE_TABLES_HPP_
+#endif  // GAS_SRC_CORE_TABLES_HPP_

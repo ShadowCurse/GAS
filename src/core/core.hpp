@@ -33,6 +33,6 @@ class Core {
   Connector connector_;
 };
 
-} // namespace gas
+}  // namespace gas
 
-#endif //GAS_SRC_CORE_CORE_HPP_
+#endif  // GAS_SRC_CORE_CORE_HPP_
