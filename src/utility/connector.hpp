@@ -6,6 +6,7 @@
 #include <pqxx/pqxx>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <utility>
 
 #include "query.hpp"
@@ -118,6 +119,11 @@ class Connector {
 
  public:
   Connector() = default;
+  ~Connector() {
+    notifiers_.clear();
+    connection_->close();
+    notifier_thread_.join();
+  }
   explicit Connector(Settings settings) : settings_(std::move(settings)) {}
 
   void set_settings(Settings settings) { settings_ = std::move(settings); }
@@ -142,12 +148,27 @@ class Connector {
     notifiers_.emplace_back(*connection_, channel, std::move(callback));
   }
 
+  void enable_notifications() {
+    notifier_thread_ = std::jthread([&](std::stop_token stop_token) {
+      while (!stop_token.stop_requested()) {
+        std::cout << "Listening for notifications:\n";
+        try {
+          connection_->await_notification();
+        } catch (std::exception const &e) {
+          std::cerr << "Notifier exception: " << e.what() << '\n';
+          return;
+        }
+      }
+    });
+  }
+
   template <typename... T>
   auto exec(Query<T...> query) -> std::optional<Result<T...>> {
     pqxx::result result;
     try {
       pqxx::work work(*connection_);
       result = work.exec(query.sql);
+      //      work.commit();
     } catch (std::exception const &e) {
       std::cerr << "Caught exception: " << e.what() << '\n';
       return std::nullopt;
@@ -159,6 +180,7 @@ class Connector {
   Settings settings_;
   std::unique_ptr<pqxx::connection> connection_;
   std::vector<Notifier> notifiers_;
+  std::jthread notifier_thread_;
 };
 
 }  // namespace gas
