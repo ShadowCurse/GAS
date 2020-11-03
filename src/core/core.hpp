@@ -1,13 +1,13 @@
 #ifndef GAS_SRC_CORE_CORE_HPP_
 #define GAS_SRC_CORE_CORE_HPP_
 
-#include "utility/db_connector.hpp"
+#include "utility/connector.hpp"
 
 namespace gas {
 
 class Core {
  public:
-  using callback_fn = Notifier::callback_fn;
+  using callback_fn = NotificationSystem::callback_fn;
 
  public:
   Core() = default;
@@ -30,7 +30,7 @@ class Core {
   auto on_resource_update();
 
  private:
-  Connector connector_;
+  std::unique_ptr<Connector> connector_;
 };
 
 }  // namespace gas

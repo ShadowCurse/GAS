@@ -12,16 +12,25 @@ namespace gas {
 struct Developer {
   using developer_query = Query<int, std::string, std::string, std::string>;
 
-  explicit Developer(const std::tuple<int, std::string, std::string, std::string> &args) {
+  explicit Developer(
+      const std::tuple<int, std::string, std::string, std::string> &args) {
     std::tie(id, name, email, description) = args;
   }
 
   [[nodiscard]] static auto get_all() {
     return developer_query("select * from developer;");
   }
-  [[nodiscard]] static auto get_named(const std::string &name) {
+  [[nodiscard]] static auto get_named(std::string_view name) {
     return developer_query(
         fmt::format("select * from developer where name = '{}'", name));
+  }
+  [[nodiscard]] static auto insert(std::string_view name,
+                                   std::string_view email,
+                                   std::string_view description) {
+    return developer_query(
+        fmt::format("insert into developer(name, email, description) values "
+                    "('{}', '{}', '{}');",
+                    name, email, description));
   }
 
   int id{};
@@ -42,8 +51,7 @@ struct ResourceType {
 };
 
 struct Resource {
-  using resource_query =
-  Query<int, std::string, std::string, int, int, int>;
+  using resource_query = Query<int, std::string, std::string, int, int, int>;
 
   explicit Resource(
       const std::tuple<int, std::string, std::string, int, int, int> &args) {

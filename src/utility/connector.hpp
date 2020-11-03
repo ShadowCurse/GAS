@@ -1,92 +1,17 @@
-#ifndef GAMEASSETSDB_SRC_UTILITY_DB_CONNECTOR_HPP_
-#define GAMEASSETSDB_SRC_UTILITY_DB_CONNECTOR_HPP_
+#ifndef GAS_SRC_UTILITY_DB_CONNECTOR_HPP_
+#define GAS_SRC_UTILITY_DB_CONNECTOR_HPP_
 
+// TODO think about spdlog
 #include <iostream>
-#include <pqxx/notification>
 #include <pqxx/pqxx>
-#include <sstream>
 #include <string>
-#include <thread>
 #include <utility>
 
+#include "notification.hpp"
 #include "query.hpp"
+#include "settings.hpp"
 
 namespace gas {
-
-class Settings {
- public:
-  Settings() = default;
-
-  [[nodiscard]] auto host(std::string host) -> Settings & {
-    host_ = std::move(host);
-    return *this;
-  }
-  [[nodiscard]] auto port(size_t port) -> Settings & {
-    port_ = port;
-    return *this;
-  }
-  [[nodiscard]] auto db_name(std::string db_name) -> Settings & {
-    db_name_ = std::move(db_name);
-    return *this;
-  }
-  [[nodiscard]] auto username(std::string username) -> Settings & {
-    username_ = std::move(username);
-    return *this;
-  }
-  [[nodiscard]] auto password(std::string password) -> Settings & {
-    password_ = std::move(password);
-    return *this;
-  }
-
-  [[nodiscard]] auto to_string() const -> std::string {
-    std::stringstream ss{};
-    ss << " host=" << host_ << " port=" << std::to_string(port_)
-       << " dbname=" << db_name_ << " user=" << username_
-       << " password=" << password_;
-    return ss.str();
-  }
-
- private:
-  std::string host_;
-  size_t port_{};
-  std::string db_name_;
-  std::string username_;
-  std::string password_;
-};
-
-class Notifier final : public pqxx::notification_receiver {
- public:
-  using callback_fn = std::function<void(std::string const &)>;
-
- public:
-  Notifier(pqxx::connection &connector, const std::string &channel,
-           callback_fn callback)
-      : pqxx::notification_receiver(connector, channel),
-        connector_(connector),
-        channel_(channel),
-        callback_(std::move(callback)) {}
-  ~Notifier() final = default;
-  Notifier(const Notifier &other)
-      : pqxx::notification_receiver(other.connector_, other.channel_),
-        connector_(other.connector_),
-        channel_(other.channel_),
-        callback_(other.callback_) {}
-
-  Notifier(Notifier &&other) noexcept
-      : pqxx::notification_receiver(other.connector_, other.channel_),
-        connector_(other.connector_),
-        channel_(std::move(other.channel_)),
-        callback_(std::move(other.callback_)) {}
-
-  void operator()(std::string const &payload, int backend_pid) final {
-    callback_(payload);
-  }
-
- private:
-  pqxx::connection &connector_;
-  std::string channel_;
-  callback_fn callback_;
-};
 
 template <typename... Types>
 class Result {
@@ -115,23 +40,20 @@ class Result {
 
 class Connector {
  public:
-  using notification_callback = Notifier::callback_fn;
+  using notification_callback = NotificationSystem::callback_fn;
 
  public:
-  Connector() = default;
-  ~Connector() {
-    notifiers_.clear();
-    connection_->close();
-    notifier_thread_.join();
-  }
-  explicit Connector(Settings settings) : settings_(std::move(settings)) {}
+  explicit Connector(Settings settings)
+      : settings_(settings), notification_system_(std::move(settings)) {}
 
-  void set_settings(Settings settings) { settings_ = std::move(settings); }
+  auto set_settings(Settings settings) -> void {
+    settings_ = std::move(settings);
+  }
   [[nodiscard]] auto get_settings() const -> const Settings & {
     return settings_;
   }
 
-  bool connect() {
+  auto connect() -> bool {
     try {
       connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
     } catch (std::exception const &e) {
@@ -139,28 +61,19 @@ class Connector {
     }
     return true;
   }
-  bool connect(const Settings &settings) {
+  auto connect(const Settings &settings) -> bool {
     settings_ = settings;
     return connect();
   }
-  void add_notifier(const std::string &channel,
-                    notification_callback callback) {
-    notifiers_.emplace_back(*connection_, channel, std::move(callback));
+  auto add_notifier(const std::string &channel,
+                    const notification_callback &callback) -> void {
+    notification_system_.add_notifier(channel, callback);
   }
-
-  void enable_notifications() {
-    notifier_thread_ = std::jthread([&](std::stop_token stop_token) {
-      while (!stop_token.stop_requested()) {
-        std::cout << "Listening for notifications:\n";
-        try {
-          connection_->await_notification();
-        } catch (std::exception const &e) {
-          std::cerr << "Notifier exception: " << e.what() << '\n';
-          return;
-        }
-      }
-    });
+  auto delete_notifier(const std::string &channel) -> void {
+    notification_system_.delete_notifier(channel);
   }
+  auto enable_notifications() -> void { notification_system_.enable(); }
+  auto disable_notifications() -> void { notification_system_.disable(); }
 
   template <typename... T>
   auto exec(Query<T...> query) -> std::optional<Result<T...>> {
@@ -179,10 +92,9 @@ class Connector {
  private:
   Settings settings_;
   std::unique_ptr<pqxx::connection> connection_;
-  std::vector<Notifier> notifiers_;
-  std::jthread notifier_thread_;
+  NotificationSystem notification_system_;
 };
 
 }  // namespace gas
 
-#endif  // GAMEASSETSDB_SRC_UTILITY_DB_CONNECTOR_HPP_
+#endif  // GAS_SRC_UTILITY_DB_CONNECTOR_HPP_
