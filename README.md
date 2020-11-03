@@ -8,9 +8,8 @@ It allows to store and manage different assets used in game development process 
 Currently db of choice is Postgresql.
 
 ## Instructions for build:
-To build this project you need
+To build this project you need dependencies and can be obtained with
 [conan](https://docs.conan.io/en/latest/installation.html)
-and [pqxx](https://github.com/jtv/libpqxx) 
 
 Steps:
 ~~~~
@@ -41,9 +40,3 @@ $ conan profile update env.CC=/usr/bin/clang default
 $ conan profile update env.CXX=/usr/bin/clang++ default
 ~~~~
 
-## Current plan:
-- add select support
-- add insert support
-- add update support
-- add triggers
-- add gui
