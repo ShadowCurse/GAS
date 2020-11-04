@@ -26,13 +26,14 @@ auto main() -> int {
               << '\n';
     return -1;
   }
-  if (auto res = connector.exec(query)) {
-    std::cout << "Found " << (*res).size() << ":\n";
-    auto values = res->cast<Developer>();
-    for (const auto& v : values) std::cout << "name = " << v.name << '\n';
-  } else {
-    std::cout << "Query was not processed\n";
-  }
+  connector.disable_notifications();
+//  if (auto res = connector.exec(query)) {
+//    std::cout << "Found " << (*res).size() << ":\n";
+//    auto values = res->cast<Developer>();
+//    for (const auto& v : values) std::cout << "name = " << v.name << '\n';
+//  } else {
+//    std::cout << "Query was not processed\n";
+//  }
   std::cout << "End\n";
   return 0;
 }

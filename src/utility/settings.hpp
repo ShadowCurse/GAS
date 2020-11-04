@@ -10,6 +10,7 @@ namespace gas {
 class Settings {
  public:
   Settings() = default;
+  auto operator==(const Settings& other) const -> bool = default;
 
   [[nodiscard]] auto host(std::string host) -> Settings& {
     host_ = std::move(host);

@@ -17,5 +17,10 @@ add_executable(GAS src/main.cpp
         src/utility/notification.hpp src/utility/settings.hpp)
 
 target_include_directories(GAS PRIVATE ${CMAKE_SOURCE_DIR}/src)
-
 target_link_libraries(GAS PRIVATE ${CONAN_LIBS})
+
+add_executable(Tests tests/main.cpp
+        tests/connector_tests.hpp)
+
+target_include_directories(Tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(Tests PRIVATE ${CONAN_LIBS})

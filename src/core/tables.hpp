@@ -32,6 +32,10 @@ struct Developer {
                     "('{}', '{}', '{}');",
                     name, email, description));
   }
+  [[nodiscard]] static auto remove(std::string_view name) {
+    return developer_query(
+        fmt::format("delete from developer where name = '{}';", name));
+  }
 
   int id{};
   std::string name;

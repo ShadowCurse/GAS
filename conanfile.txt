@@ -1,6 +1,7 @@
 [requires]
 libpqxx/7.2.1
 fmt/7.1.0
+gtest/1.10.0
 
 [generators]
 cmake

@@ -45,6 +45,7 @@ class Connector {
  public:
   explicit Connector(Settings settings)
       : settings_(settings), notification_system_(std::move(settings)) {}
+  ~Connector() { disconnect(); }
 
   auto set_settings(Settings settings) -> void {
     settings_ = std::move(settings);
@@ -52,10 +53,10 @@ class Connector {
   [[nodiscard]] auto get_settings() const -> const Settings & {
     return settings_;
   }
-
   auto connect() -> bool {
     try {
       connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
+      if (!connection_->is_open()) return false;
     } catch (std::exception const &e) {
       return false;
     }
@@ -65,25 +66,39 @@ class Connector {
     settings_ = settings;
     return connect();
   }
+  auto disconnect() -> void {
+    if (connection_) connection_.reset(nullptr);
+    notification_system_.disable();
+  }
+  auto connected() -> bool { return connection_ && connection_->is_open(); }
   auto add_notifier(const std::string &channel,
                     const notification_callback &callback) -> void {
     notification_system_.add_notifier(channel, callback);
   }
-  auto delete_notifier(const std::string &channel) -> void {
+  auto delete_notifiers(const std::string &channel) -> void {
     notification_system_.delete_notifier(channel);
   }
-  auto enable_notifications() -> void { notification_system_.enable(); }
-  auto disable_notifications() -> void { notification_system_.disable(); }
+  auto get_notifiers() { return notification_system_.get_notifiers(); }
+  auto enable_notifications() -> bool { return notification_system_.enable(); }
+  auto disable_notifications() -> bool {
+    return notification_system_.disable();
+  }
+  auto notifications_enabled() -> bool {
+    return notification_system_.is_enabled();
+  }
 
   template <typename... T>
   auto exec(Query<T...> query) -> std::optional<Result<T...>> {
+    if (query.sql.empty()) {
+      return std::nullopt;
+    }
     pqxx::result result;
     try {
       pqxx::work work(*connection_);
       result = work.exec(query.sql);
-      //      work.commit();
+      work.commit();
     } catch (std::exception const &e) {
-      std::cerr << "Caught exception: " << e.what() << '\n';
+      std::cerr << "exec caught exception: " << e.what() << '\n';
       return std::nullopt;
     }
     return Result<T...>(result);

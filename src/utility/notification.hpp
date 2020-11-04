@@ -24,10 +24,6 @@ class NotificationSystem {
           connection_(connection),
           info_(info) {}
     ~notifier() final = default;
-    notifier(notifier &&other) noexcept
-        : pqxx::notification_receiver(other.connection_, other.info_.channel),
-          connection_(other.connection_),
-          info_(other.info_) {}
     auto operator()(std::string const &payload, int backend_pid) -> void final {
       info_.callback(payload);
     }
@@ -51,37 +47,45 @@ class NotificationSystem {
       return item.channel == channel;
     });
   }
+  [[nodiscard]] auto get_notifiers() -> const std::vector<notifier_info> & {
+    return notifiers_infos_;
+  }
   auto enable() -> bool {
     try {
       connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
+      if (!connection_->is_open()) return false;
     } catch (std::exception const &e) {
       return false;
     }
+
     for (const auto &info : notifiers_infos_)
-      notifiers_.emplace_back(*connection_, info);
-    notifier_thread_ = std::jthread([&](const std::stop_token &stop_token) {
+      notifiers_.emplace_back(std::make_unique<notifier>(*connection_, info));
+
+    notifier_thread_ = std::jthread([this](const std::stop_token &stop_token) {
       while (!stop_token.stop_requested()) {
         try {
-          connection_->await_notification();
+          if (connection_) connection_->await_notification();
         } catch (std::exception const &e) {
           std::cerr << "Notifier exception: " << e.what() << '\n';
-          return;
         }
       }
     });
     return true;
   }
-  auto disable() -> void {
-    notifiers_.clear();
+  auto disable() -> bool {
+    notifier_thread_.request_stop();
     if (connection_) connection_->close();
-    notifier_thread_.join();
+    notifiers_.clear();
+    if (notifier_thread_.joinable()) notifier_thread_.join();
+    return true;
   }
+  auto is_enabled() -> bool { return !notifiers_.empty(); }
 
  private:
   Settings settings_;
   std::unique_ptr<pqxx::connection> connection_;
   std::vector<notifier_info> notifiers_infos_;
-  std::vector<notifier> notifiers_;
+  std::vector<std::unique_ptr<notifier>> notifiers_;
   std::jthread notifier_thread_;
 };
 
