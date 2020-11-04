@@ -4,8 +4,15 @@ create or replace function on_developer_update() returns trigger as
 $$
 begin
     -- log
-    insert into logs (date, description)
-    values ((select current_date), concat('developer ', lower(tg_op), ' ', new.name, old.name));
+    if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('developer ', lower(tg_op), ' ', new.name));
+    elseif lower(tg_op) = 'delete'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('developer ', lower(tg_op), ' ', old.name));
+    end if;
     -- notify
     notify gas_channel, 'developer update';
     return new;
@@ -22,8 +29,15 @@ create or replace function on_resourcetype_update() returns trigger as
 $$
 begin
     -- log
-    insert into logs (date, description)
-    values ((select current_date), concat('resourcetype ', lower(tg_op), ' ', new.name, old.name));
+    if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('resourcetype ', lower(tg_op), ' ', new.name));
+    elseif lower(tg_op) = 'delete'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('resourcetype ', lower(tg_op), ' ', old.name));
+    end if;
     -- notify
     notify gas_channel, 'resourcetype update';
     return new;
@@ -40,8 +54,15 @@ create or replace function on_resource_update() returns trigger as
 $$
 begin
     -- log
-    insert into logs (date, description)
-    values ((select current_date), concat('resource ', lower(tg_op), ' ', new.name, old.name));
+    if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('resource ', lower(tg_op), ' ', new.name));
+    elseif lower(tg_op) = 'delete'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('resource ', lower(tg_op), ' ', old.name));
+    end if;
     -- notify
     notify gas_channel, 'resource update';
     return new;
@@ -58,8 +79,15 @@ create or replace function on_dependency_update() returns trigger as
 $$
 begin
     -- log
-    insert into logs (date, description)
-    values ((select current_date), concat('dependency ', lower(tg_op), ' ', new.name, old.name));
+    if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('dependency ', lower(tg_op), ' ', new.id));
+    elseif lower(tg_op) = 'delete'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('dependency ', lower(tg_op), ' ', old.id));
+    end if;
     -- notify
     notify gas_channel, 'dependency update';
     return new;
@@ -76,8 +104,15 @@ create or replace function on_commit_update() returns trigger as
 $$
 begin
     -- log
-    insert into logs (date, description)
-    values ((select current_date), concat('commit ', lower(tg_op), ' ', new.name, old.name));
+    if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('commit ', lower(tg_op), ' ', new.id));
+    elseif lower(tg_op) = 'delete'
+    then
+        insert into logs (date, description)
+        values ((select current_date), concat('commit ', lower(tg_op), ' ', old.id));
+    end if;
     -- notify
     notify gas_channel, 'commit update';
     return new;
