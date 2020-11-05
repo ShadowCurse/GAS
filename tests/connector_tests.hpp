@@ -3,6 +3,8 @@
 
 #include <gtest/gtest.h>
 
+#include <atomic>
+
 #include "core/tables.hpp"
 #include "utility/connector.hpp"
 #include "utility/settings.hpp"
@@ -21,7 +23,7 @@ TEST(Connector, set_settings) {
   EXPECT_EQ(settings, connector.get_settings());
 }
 
-TEST(Connector, minimal_start) {
+TEST(Connector, connect) {
   auto settings = Settings{}
                       .host("localhost")
                       .port(5432)
@@ -32,6 +34,21 @@ TEST(Connector, minimal_start) {
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
   ASSERT_TRUE(connector.connected());
+}
+
+TEST(Connector, disconnect) {
+  auto settings = Settings{}
+                      .host("localhost")
+                      .port(5432)
+                      .db_name("gas")
+                      .username("gas_admin")
+                      .password("password");
+
+  Connector connector(settings);
+  ASSERT_TRUE(connector.connect());
+  ASSERT_TRUE(connector.connected());
+  connector.disconnect();
+  ASSERT_FALSE(connector.connected());
 }
 
 TEST(Connector, empty_query_fail) {
@@ -263,7 +280,7 @@ TEST(Connector, test_notifications) {
   ASSERT_EQ(connector.connect(), true);
   ASSERT_EQ(connector.connected(), true);
 
-  int count{0};
+  std::atomic_int count{0};
   auto test_notifier = [&count](const std::string& payload) { ++count; };
 
   connector.add_notifier("gas_channel", test_notifier);
@@ -279,6 +296,8 @@ TEST(Connector, test_notifications) {
     auto values = res->cast<Developer>();
     EXPECT_EQ(values.size(), 0);
   }
+  EXPECT_EQ(connector.disable_notifications(), true);
+  EXPECT_EQ(connector.notifications_enabled(), false);
   EXPECT_EQ(count, 3);
 }
 
