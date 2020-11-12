@@ -53,16 +53,17 @@ class Connector {
   [[nodiscard]] auto get_settings() const -> const Settings & {
     return settings_;
   }
-  auto connect() -> bool {
+  [[nodiscard]] auto connect() -> bool {
     try {
       connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
       if (!connection_->is_open()) return false;
     } catch (std::exception const &e) {
+      std::cerr << "Caught exception: " << e.what() << '\n';
       return false;
     }
     return true;
   }
-  auto connect(const Settings &settings) -> bool {
+  [[nodiscard]] auto connect(const Settings &settings) -> bool {
     settings_ = settings;
     return connect();
   }
@@ -70,7 +71,7 @@ class Connector {
     if (connection_) connection_.reset(nullptr);
     notification_system_.disable();
   }
-  auto connected() -> bool { return connection_ && connection_->is_open(); }
+  [[nodiscard]] auto connected() const -> bool { return connection_ && connection_->is_open(); }
   auto add_notifier(const std::string &channel,
                     const notification_callback &callback) -> void {
     notification_system_.add_notifier(channel, callback);

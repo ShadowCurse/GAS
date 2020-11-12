@@ -5,9 +5,9 @@
 
 #include <atomic>
 
+#include "core/connector.hpp"
+#include "core/settings.hpp"
 #include "core/tables.hpp"
-#include "utility/connector.hpp"
-#include "utility/settings.hpp"
 
 using namespace gas;
 

@@ -1,36 +1,38 @@
 #ifndef GAS_SRC_CORE_CORE_HPP_
 #define GAS_SRC_CORE_CORE_HPP_
 
-#include "utility/connector.hpp"
+#include "storage.hpp"
 
 namespace gas {
 
 class Core {
  public:
-  using callback_fn = NotificationSystem::callback_fn;
-
- public:
   Core() = default;
 
-  auto set_connection_settings(Settings settings) -> void;
-  auto connect() -> bool;
+  auto add_storage(Settings settings) {
+    return storage_.add_storage(std::move(settings));
+  }
+  auto remove_storage(StorageUnit::storage_id id) {
+    storage_.remove_storage(id);
+  }
+  auto connect_storage(StorageUnit::storage_id id) {
+    return storage_.connect_storage(id);
+  }
+  auto disconnect_storage(StorageUnit::storage_id id) {
+    return storage_.disconnect_storage(id);
+  }
 
-  auto add_project() -> bool;
-  auto get_project() -> bool;
-  auto delete_project() -> bool;
+  template <typename T>
+  auto add_view() {
+    return storage_.add_view<T>();
+  }
 
-  auto get_resource_tree();
-  auto get_commit_history();
-  auto get_commit_history(std::string_view resource);
-  auto upload_resource(std::string_view name);
-  auto update_resource_info();
-  auto commit_resource();
-
-  auto on_commit_update();
-  auto on_resource_update();
+  auto update_storage() -> void {
+    storage_.update();
+  }
 
  private:
-  std::unique_ptr<Connector> connector_;
+  Storage storage_;
 };
 
 }  // namespace gas

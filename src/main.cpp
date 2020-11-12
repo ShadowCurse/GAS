@@ -1,7 +1,6 @@
 #include <iostream>
 
-#include "core/tables.hpp"
-#include "utility/connector.hpp"
+#include "core/core.hpp"
 
 using namespace gas;
 
@@ -9,31 +8,34 @@ auto callback(const std::string& payload) { std::cout << payload << '\n'; }
 
 auto main() -> int {
   std::cout << "Start:\n";
-  auto query = Developer::get_all();
+//  auto query = Developer::get_all();
   auto settings = gas::Settings{}
                       .host("localhost")
                       .port(5432)
                       .db_name("gas")
                       .username("gas_admin")
                       .password("password");
-  Connector connector(settings);
-  if (connector.connect()) {
-    connector.add_notifier("gas_channel", callback);
-    connector.enable_notifications();
-  } else {
-    std::cout << "could not connect to db with settings: " +
-                     settings.to_string()
-              << '\n';
-    return -1;
+
+  Core core;
+  auto storage1 = core.add_storage(settings);
+  auto connection_result = core.connect_storage(storage1);
+
+  std::cout << "Connection result: " << std::boolalpha << connection_result << '\n';
+
+  auto view_dev = core.add_view<Developer>();
+  auto view_res = core.add_view<Resource>();
+
+  core.update_storage();
+
+  for (const auto& item: view_dev) {
+    std::cout << item.name << '\n';
   }
-  connector.disable_notifications();
-//  if (auto res = connector.exec(query)) {
-//    std::cout << "Found " << (*res).size() << ":\n";
-//    auto values = res->cast<Developer>();
-//    for (const auto& v : values) std::cout << "name = " << v.name << '\n';
-//  } else {
-//    std::cout << "Query was not processed\n";
-//  }
+  for (const auto& item: view_res) {
+    std::cout << item.name << '\n';
+  }
+
+  core.disconnect_storage(storage1);
+
   std::cout << "End\n";
   return 0;
 }

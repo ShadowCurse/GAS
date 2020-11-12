@@ -5,9 +5,23 @@
 
 #include <tuple>
 
-#include "utility/query.hpp"
+#include "query.hpp"
 
 namespace gas {
+
+
+struct Log {
+  using log_query = Query<int, std::string, std::string>;
+
+  explicit Log(
+      const std::tuple<int , std::string, std::string> &args) {
+    std::tie(id, date, description) = args;
+  }
+
+  int id{};
+  std::string date;
+  std::string description;
+};
 
 struct Developer {
   using developer_query = Query<int, std::string, std::string, std::string>;

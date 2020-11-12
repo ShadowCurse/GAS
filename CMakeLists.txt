@@ -9,12 +9,14 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 add_executable(GAS src/main.cpp
-        src/utility/connector.hpp
-        src/utility/query.hpp
         src/core/core.cpp
         src/core/core.hpp
         src/core/tables.hpp
-        src/utility/notification.hpp src/utility/settings.hpp)
+        src/core/cache.hpp
+        src/core/connector.hpp
+        src/core/query.hpp
+        src/core/notification.hpp
+        src/core/settings.hpp src/core/storage.hpp)
 
 target_include_directories(GAS PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(GAS PRIVATE ${CONAN_LIBS})
