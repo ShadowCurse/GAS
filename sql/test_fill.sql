@@ -13,10 +13,10 @@ insert into resourcetype(name) values ('Mesh');
 insert into resourcetype(name) values ('Audio');
 insert into resourcetype(name) values ('TileMap');
 
-insert into resource(name, description, size, checksum, type, data) values ('Texture1', 'Descr1', 1, 'A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11', 1, '123132131');
-insert into resource(name, description, size, checksum, type, data) values ('Texture2', 'Descr2', 2, 'B0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11', 1, '123132131');
-insert into resource(name, description, size, checksum, type, data) values ('Mesh1', 'Descr3', 3, 'C0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11', 2, '123132131');
-insert into resource(name, description, size, checksum, type, data) values ('Audio1', 'Descr4', 4, 'D0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11', 3, '123132131');
+insert into resource(name, description, size, type, data) values ('Texture1', 'Descr1', 1, 1, '123132131');
+insert into resource(name, description, size, type, data) values ('Texture2', 'Descr2', 2, 1, '123132131');
+insert into resource(name, description, size, type, data) values ('Mesh1', 'Descr3', 3, 2, '123132131');
+insert into resource(name, description, size, type, data) values ('Audio1', 'Descr4', 4, 3, '123132131');
 
 insert into dependency(requesting_resource, required_resource) values (3, 2);
 insert into dependency(requesting_resource, required_resource) values (2, 4);

@@ -4,8 +4,11 @@
 // TODO think about spdlog
 #include <iostream>
 #include <pqxx/pqxx>
+#include <pqxx/largeobject>
 #include <string>
 #include <utility>
+
+#include <fstream>
 
 #include "notification.hpp"
 #include "query.hpp"
@@ -41,6 +44,7 @@ class Result {
 class Connector {
  public:
   using notification_callback = NotificationSystem::callback_fn;
+  using oid = pqxx::oid;
 
  public:
   explicit Connector(Settings settings)
@@ -103,6 +107,33 @@ class Connector {
       return std::nullopt;
     }
     return Result<T...>(result);
+  }
+
+  auto create_lo() -> oid {
+    pqxx::work work(*connection_);
+    pqxx::largeobject lo(work);
+    work.commit();
+    return lo.id();
+  }
+
+  auto remove_lo(oid oid) -> void {
+    pqxx::work work(*connection_);
+    pqxx::largeobject lo(oid);
+    lo.remove(work);
+    work.commit();
+  }
+
+  auto upload_large_object(std::string_view file_path) -> oid {
+    pqxx::work work(*connection_);
+    pqxx::largeobjectaccess lo_new(work, file_path);
+    work.commit();
+    return lo_new.id();
+  }
+
+  auto download_large_object(uint oid, std::string_view file_path) -> void {
+    pqxx::work work(*connection_);
+    pqxx::largeobjectaccess object(work, oid);
+    object.to_file(file_path);
   }
 
  private:

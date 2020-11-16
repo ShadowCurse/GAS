@@ -1,6 +1,8 @@
 #ifndef GAS_SRC_CORE_STORAGE_HPP_
 #define GAS_SRC_CORE_STORAGE_HPP_
 
+#include <filesystem>
+
 #include "cache.hpp"
 #include "connector.hpp"
 #include "tables.hpp"
@@ -8,16 +10,26 @@
 namespace gas {
 
 using StorageCache =
-    Cache<Log, Developer, ResourceType, Resource, Dependency, Commit>;
+    StorageCache_T<Log, Developer, ResourceType, Resource, Dependency, Commit>;
 
-class StorageUnit {
+template <typename ... Types>
+class StorageUnit_T {
  public:
   using storage_id = uint32_t;
-  StorageUnit(storage_id id, Settings settings)
+  StorageUnit_T(storage_id id, Settings settings)
       : id_(id), connector_(std::move(settings)) {}
 
-  [[nodiscard]] auto connect() -> bool { return connector_.connect(); }
-  auto disconnect() -> void { connector_.disconnect(); }
+  [[nodiscard]] auto connect() -> bool {
+    connector_.add_notifier("gas_channel", [this](const std::string& payload) {
+      notification_callback(payload);
+    });
+    connector_.enable_notifications();
+    return connector_.connect() && connector_.notifications_enabled();
+  }
+  auto disconnect() -> void {
+    connector_.disconnect();
+    connector_.delete_notifiers("gas_channel");
+  }
   [[nodiscard]] auto connected() const -> bool {
     return connector_.connected();
   }
@@ -27,19 +39,81 @@ class StorageUnit {
     return cache_.get_cache_view<T>();
   }
   [[nodiscard]] constexpr inline auto id() const { return id_; }
-  auto update() -> void {
+
+  template <typename T>
+  auto update() -> bool {
     if (connector_.connected()) {
-      if (auto result = connector_.exec(Developer::get_all())) {
-        cache_.put(result->cast<Developer>());
+      if (auto result = connector_.exec(T::get_all())) {
+        cache_.put(result->template cast<T>());
+        return true;
       }
     }
+    return false;
+  }
+
+  auto update_all() -> bool {
+    if (connector_.connected()) {
+      return (update<Types>() || ...);
+    }
+    return false;
+  }
+
+  template <typename T>
+  auto insert(const T& data) {
+    connector_.exec(data.insert_query());
+  }
+  template <typename T>
+  auto update(const T& data) {
+    connector_.exec(data.update_query());
+  }
+  template <typename T>
+  auto remove(const T& data) {
+    connector_.exec(data.remove_query());
+  }
+
+  auto create_resource(Resource& resource, std::string_view file_path) {
+    auto size = std::filesystem::file_size(file_path);
+    auto lo_oid = connector_.upload_large_object(file_path);
+    resource.data = lo_oid;
+    resource.size = size;
+    insert(resource);
+  }
+  auto remove_resource(const Resource& resource) {
+    connector_.remove_lo(resource.data);
+    remove(resource);
+  }
+  auto upload_resource(Resource& resource, std::string_view file_path) {
+    remove_resource(resource);
+    auto size = std::filesystem::file_size(file_path);
+    auto lo_oid = connector_.upload_large_object(file_path);
+    resource.data = lo_oid;
+    resource.size = size;
+    update(resource);
+  }
+  auto download_resource(const Resource& resource, std::string_view file_path) {
+    connector_.download_large_object(resource.data, file_path);
   }
 
  private:
+  auto notification_callback(const std::string& payload) -> void {
+    if (callback_map.contains(payload)) callback_map[payload]();
+  }
+
   storage_id id_;
   Connector connector_;
   StorageCache cache_;
+
+  std::map<std::string_view, std::function<void()>> callback_map = {
+      {"log", [this] { update<Log>(); }},
+      {"developer", [this] { update<Developer>(); }},
+      {"resourcetype", [this] { update<ResourceType>(); }},
+      {"resource", [this] { update<Resource>(); }},
+      {"dependency", [this] { update<Dependency>(); }},
+      {"commit", [this] { update<Commit>(); }},
+  };
 };
+
+using StorageUnit = StorageUnit_T<Log, Developer, ResourceType, Resource, Dependency, Commit>;
 
 template <typename T>
 class View {
@@ -112,14 +186,22 @@ class View {
   };
 
  public:
-  explicit View(const std::vector<std::unique_ptr<StorageUnit>>& storages) {
+  explicit View(const std::vector<std::shared_ptr<StorageUnit>>& storages) {
     for (const auto& storage : storages) {
       views_.emplace_back(storage->create_view<T>());
     }
   }
 
-  auto begin() { return Iterator::create_begin(&views_); }
-  auto end() { return Iterator::create_end(&views_); }
+  // TODO make const
+  [[nodiscard]] constexpr auto begin() {
+    return Iterator::create_begin(&views_);
+  }
+  [[nodiscard]] constexpr auto end() { return Iterator::create_end(&views_); }
+  [[nodiscard]] constexpr auto size() const {
+    return std::accumulate(
+        std::begin(views_), std::end(views_), 0,
+        [](const auto& size, const auto& view) { return size + view.size(); });
+  }
 
  private:
   std::vector<CacheView<T>> views_;
@@ -132,7 +214,7 @@ class Storage {
   [[nodiscard]] auto add_storage(Settings settings) -> StorageUnit::storage_id {
     ++id_counter;
     storages_.emplace_back(
-        std::make_unique<StorageUnit>(id_counter, std::move(settings)));
+        std::make_shared<StorageUnit>(id_counter, std::move(settings)));
     return id_counter;
   }
   auto remove_storage(StorageUnit::storage_id id) -> void {
@@ -154,18 +236,27 @@ class Storage {
         result != std::end(storages_))
       (*result)->disconnect();
   }
+  auto get_storage(StorageUnit::storage_id id) -> std::optional<std::shared_ptr<StorageUnit>> {
+    if (auto result = std::find_if(
+          std::begin(storages_), std::end(storages_),
+          [&id](const auto& storage) { return storage->id() == id; });
+        result != std::end(storages_))
+      return (*result);
+    return std::nullopt;
+  }
   template <typename T>
   [[nodiscard]] constexpr auto add_view() const {
+    for (const auto& storage : storages_) storage->update<T>();
     return View<T>{storages_};
   };
 
   auto update() -> void {
-    for (const auto& storage : storages_) storage->update();
+    for (const auto& storage : storages_) storage->update_all();
   }
 
  private:
   StorageUnit::storage_id id_counter{0};
-  std::vector<std::unique_ptr<StorageUnit>> storages_;
+  std::vector<std::shared_ptr<StorageUnit>> storages_;
 };
 
 }  // namespace gas

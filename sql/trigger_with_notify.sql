@@ -7,14 +7,14 @@ begin
     if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('developer ', lower(tg_op), ' ', new.name));
+        values ((select current_date), concat(lower(tg_op), ' developer ', new.name));
     elseif lower(tg_op) = 'delete'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('developer ', lower(tg_op), ' ', old.name));
+        values ((select current_date), concat(lower(tg_op), ' developer ', old.name));
     end if;
     -- notify
-    notify gas_channel, 'developer update';
+    notify gas_channel, 'developer';
     return new;
 end;
 $$
@@ -32,14 +32,14 @@ begin
     if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('resourcetype ', lower(tg_op), ' ', new.name));
+        values ((select current_date), concat(lower(tg_op), ' resourcetype ', new.name));
     elseif lower(tg_op) = 'delete'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('resourcetype ', lower(tg_op), ' ', old.name));
+        values ((select current_date), concat(lower(tg_op), ' resourcetype ', old.name));
     end if;
     -- notify
-    notify gas_channel, 'resourcetype update';
+    notify gas_channel, 'resourcetype';
     return new;
 end;
 $$
@@ -57,14 +57,14 @@ begin
     if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('resource ', lower(tg_op), ' ', new.name));
+        values ((select current_date), concat(lower(tg_op), ' resource ', new.name));
     elseif lower(tg_op) = 'delete'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('resource ', lower(tg_op), ' ', old.name));
+        values ((select current_date), concat(lower(tg_op), ' resource ', old.name));
     end if;
     -- notify
-    notify gas_channel, 'resource update';
+    notify gas_channel, 'resource';
     return new;
 end;
 $$
@@ -82,14 +82,14 @@ begin
     if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('dependency ', lower(tg_op), ' ', new.id));
+        values ((select current_date), concat(lower(tg_op), ' dependency ', new.id));
     elseif lower(tg_op) = 'delete'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('dependency ', lower(tg_op), ' ', old.id));
+        values ((select current_date), concat(lower(tg_op), ' dependency ', old.id));
     end if;
     -- notify
-    notify gas_channel, 'dependency update';
+    notify gas_channel, 'dependency';
     return new;
 end;
 $$
@@ -107,14 +107,14 @@ begin
     if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('commit ', lower(tg_op), ' ', new.id));
+        values ((select current_date), concat(lower(tg_op), ' commit ', new.id));
     elseif lower(tg_op) = 'delete'
     then
         insert into logs (date, description)
-        values ((select current_date), concat('commit ', lower(tg_op), ' ', old.id));
+        values ((select current_date), concat(lower(tg_op), ' commit ', old.id));
     end if;
     -- notify
-    notify gas_channel, 'commit update';
+    notify gas_channel, 'commit';
     return new;
 end;
 $$

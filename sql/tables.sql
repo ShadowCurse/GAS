@@ -25,8 +25,8 @@ create table resource
     id          int generated always as identity primary key not null,
     name        text                                         not null,
     description text,
-    size        int                                          not null,
-    checksum    uuid                                         not null,
+    size        bigint                                       not null,
+--     checksum    uuid                                         not null,
     type        int                                          not null,
     data        oid                                          not null,
     foreign key (type) references resourcetype (id) on delete cascade

@@ -26,6 +26,7 @@ class CacheView {
 
   [[nodiscard]] constexpr auto begin() const { return std::begin(cache_data_); }
   [[nodiscard]] constexpr auto end() const { return std::end(cache_data_); }
+  [[nodiscard]] constexpr auto size() const { return cache_data_.size(); }
   [[nodiscard]] constexpr auto empty() const { return cache_data_.empty(); }
 
  private:
@@ -33,10 +34,10 @@ class CacheView {
 };
 
 template <typename... Types>
-class Cache final : public CacheUnit<Types>... {
+class StorageCache_T final : public CacheUnit<Types>... {
  public:
-  Cache() = default;
-  ~Cache() final = default;
+  StorageCache_T() = default;
+  ~StorageCache_T() final = default;
 
   template <typename T>
   auto put(std::vector<T> data) {

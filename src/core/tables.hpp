@@ -9,13 +9,15 @@
 
 namespace gas {
 
-
 struct Log {
   using log_query = Query<int, std::string, std::string>;
 
-  explicit Log(
-      const std::tuple<int , std::string, std::string> &args) {
+  explicit Log(const std::tuple<int, std::string, std::string> &args) {
     std::tie(id, date, description) = args;
+  }
+
+  [[nodiscard]] static auto get_all() {
+    return log_query("select * from logs;");
   }
 
   int id{};
@@ -64,24 +66,50 @@ struct ResourceType {
     std::tie(id, name) = args;
   }
 
+  [[nodiscard]] static auto get_all() {
+    return resourcetype_query("select * from resourecetype;");
+  }
+
   int id{};
   std::string name;
 };
 
 struct Resource {
-  using resource_query = Query<int, std::string, std::string, int, int, int>;
+  using resource_query =
+      Query<int, std::string, std::string, uint64_t , int, uint>;
 
-  explicit Resource(
-      const std::tuple<int, std::string, std::string, int, int, int> &args) {
-    std::tie(id, name, description, size, checksum, type) = args;
+  explicit Resource(const std::tuple<int, std::string, std::string, uint64_t , int, uint> &args) {
+    std::tie(id, name, description, size, type, data) = args;
+  }
+  [[nodiscard]] static auto get_all() {
+    return resource_query("select * from resource;");
+  }
+
+  [[nodiscard]] auto insert_query() const {
+    return resource_query(
+        fmt::format("insert into resource(name, description, size, "
+                    "type, data) values "
+                    "('{}', '{}', '{}', '{}', '{}');",
+                    name, description, size, type, data));
+  }
+  [[nodiscard]] auto update_query() const {
+    return resource_query(
+        fmt::format("update resource set name = '{}',"
+                    "description = '{}', size = '{}', type = "
+                    "'{}', data = '{}' where id = '{}'",
+                    name, description, size, type, data, id));
+  }
+  [[nodiscard]] auto remove_query() const {
+    return resource_query(
+        fmt::format("delete from resource where id = '{}'", id));
   }
 
   int id{};
   std::string name;
   std::string description;
-  int size{};
-  int checksum{};
+  uint64_t size{};
   int type{};
+  uint data{};
 };
 
 struct Dependency {
@@ -89,6 +117,9 @@ struct Dependency {
 
   explicit Dependency(const std::tuple<int, int, int> &args) {
     std::tie(id, requesting_resource, required_resource) = args;
+  }
+  [[nodiscard]] static auto get_all() {
+    return dependency_query("select * from dependecy;");
   }
 
   int id{};
@@ -102,6 +133,9 @@ struct Commit {
   explicit Commit(
       const std::tuple<int, int, int, std::string, std::string> &args) {
     std::tie(id, dev, resource, date, message) = args;
+  }
+  [[nodiscard]] static auto get_all() {
+    return commit_query("select * from commits;");
   }
 
   int id{};

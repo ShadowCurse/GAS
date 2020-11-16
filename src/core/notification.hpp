@@ -25,6 +25,7 @@ class NotificationSystem {
           info_(info) {}
     ~notifier() final = default;
     auto operator()(std::string const &payload, int backend_pid) -> void final {
+      std::cout << "callback called with payload: " << payload << '\n';
       info_.callback(payload);
     }
 
