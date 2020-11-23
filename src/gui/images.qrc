@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/settings.svg</file>
+        <file>images/logs.svg</file>
+        <file>images/add_resource.svg</file>
+        <file>images/delete.svg</file>
+        <file>images/download.svg</file>
+        <file>images/update.svg</file>
+        <file>images/settings_unselected.svg</file>
+        <file>images/logs_unselected.svg</file>
+        <file>images/back.svg</file>
+        <file>images/show_side_bar.svg</file>
+        <file>images/hide_side_bar.svg</file>
+        <file>images/resource_unselected.svg</file>
+        <file>images/resource.svg</file>
+        <file>images/commits_unselected.svg</file>
+        <file>images/commits.svg</file>
+        <file>images/developer_unselected.svg</file>
+        <file>images/developer.svg</file>
+    </qresource>
+</RCC>
