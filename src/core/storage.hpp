@@ -245,7 +245,7 @@ class Storage {
     return std::nullopt;
   }
   template <typename T>
-  [[nodiscard]] constexpr auto add_view() const {
+  [[nodiscard]] constexpr auto create_view() const {
     for (const auto& storage : storages_) storage->update<T>();
     return View<T>{storages_};
   };

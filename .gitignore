@@ -13,3 +13,5 @@ _deps
 cmake-build-debug
 build
 build-release
+*.autosave
+*.user

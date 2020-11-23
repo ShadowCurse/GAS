@@ -19,8 +19,8 @@ auto main() -> int {
 
   std::cout << "Connection result: " << std::boolalpha << connection_result << '\n';
 
-  auto view_dev = core.add_view<Developer>();
-  auto view_res = core.add_view<Resource>();
+  auto view_dev = core.create_view<Developer>();
+  auto view_res = core.create_view<Resource>();
 
   auto res = Resource{{13, "actions", "descr", 131, 1, 0}};
 

@@ -22,8 +22,8 @@ class Core {
     return storage_.disconnect_storage(id);
   }
   template <typename T>
-  auto add_view() {
-    return storage_.add_view<T>();
+  auto create_view() {
+    return storage_.create_view<T>();
   }
   auto update_storage() -> void {
     storage_.update();
