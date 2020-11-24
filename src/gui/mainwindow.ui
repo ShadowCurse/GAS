@@ -50,7 +50,7 @@
 	background-color: rgb(18, 18, 29);
 }</string>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_9">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -69,7 +69,7 @@
     <item>
      <widget class="QStackedWidget" name="main_window_tabs">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="main_page">
        <layout class="QVBoxLayout" name="verticalLayout_16">
@@ -590,7 +590,7 @@ QSpinBox {
 }</string>
                  </property>
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>3</number>
                  </property>
                  <widget class="QWidget" name="resource_info_page">
                   <property name="styleSheet">
@@ -747,6 +747,9 @@ QPushButton::hover {
                              <height>82</height>
                             </size>
                            </property>
+                           <property name="readOnly">
+                            <bool>true</bool>
+                           </property>
                           </widget>
                          </item>
                         </layout>
@@ -797,6 +800,9 @@ QPushButton::hover {
                              <height>82</height>
                             </size>
                            </property>
+                           <property name="readOnly">
+                            <bool>true</bool>
+                           </property>
                           </widget>
                          </item>
                         </layout>
@@ -843,6 +849,9 @@ QPushButton::hover {
                              <width>172</width>
                              <height>82</height>
                             </size>
+                           </property>
+                           <property name="readOnly">
+                            <bool>true</bool>
                            </property>
                            <property name="maximum">
                             <number>9999999</number>
@@ -899,6 +908,9 @@ QPushButton::hover {
                              <width>172</width>
                              <height>82</height>
                             </size>
+                           </property>
+                           <property name="readOnly">
+                            <bool>true</bool>
                            </property>
                           </widget>
                          </item>
@@ -968,13 +980,13 @@ QTabBar::tab:selected {
                      <property name="currentIndex">
                       <number>0</number>
                      </property>
-                     <widget class="QWidget" name="resource_commits">
+                     <widget class="QWidget" name="resource_commits_box">
                       <attribute name="title">
                        <string>Commits</string>
                       </attribute>
                       <layout class="QVBoxLayout" name="verticalLayout_3">
                        <item>
-                        <widget class="QTreeWidget" name="treeWidget">
+                        <widget class="QTreeWidget" name="resource_commits">
                          <column>
                           <property name="text">
                            <string notr="true">1</string>
@@ -984,13 +996,13 @@ QTabBar::tab:selected {
                        </item>
                       </layout>
                      </widget>
-                     <widget class="QWidget" name="resource_dependency">
+                     <widget class="QWidget" name="resource_dependency_box">
                       <attribute name="title">
                        <string>Dependencies</string>
                       </attribute>
                       <layout class="QVBoxLayout" name="verticalLayout_4">
                        <item>
-                        <widget class="QListWidget" name="resource_dependency_widget"/>
+                        <widget class="QListWidget" name="resource_dependency"/>
                        </item>
                       </layout>
                      </widget>
@@ -2003,21 +2015,22 @@ QTreeView::branch {
                         <item>
                          <widget class="QGroupBox" name="connections">
                           <property name="styleSheet">
-                           <string notr="true">QPushButton {
-	text-align: center;
-
-	border: none;
-	color: white;
-    background: rgb(18, 18, 29);
-
-    border-bottom: 2px solid;
-    border-bottom-color: rgb(244, 5, 113) 
+                           <string notr="true">QPushButton {   
+ 	min-width: 170px;
+    min-height: 50px;
+    max-width: 170px;
+    max-height: 80px;
+	border: 1px solid;
+	border-radius: 7px;
+	border-color: rgb(18, 18, 29);
+	background-color: rgb(35, 36, 47);
 }
 
-QPushButton::hover {
-	background: rgb(28, 28, 39);
-}
-</string>
+QPushButton:checked {
+    border: 5px solid;
+	border-radius: 7px;
+    border-color:  rgb(0, 168, 14); 
+}</string>
                           </property>
                           <property name="title">
                            <string/>
@@ -2036,86 +2049,43 @@ QPushButton::hover {
                             <number>0</number>
                            </property>
                            <item>
-                            <widget class="QGroupBox" name="groupBox_11">
-                             <property name="title">
-                              <string/>
+                            <widget class="QPushButton" name="pushButton_2">
+                             <property name="styleSheet">
+                              <string notr="true"/>
                              </property>
-                             <layout class="QVBoxLayout" name="verticalLayout_8">
-                              <property name="leftMargin">
-                               <number>0</number>
-                              </property>
-                              <property name="topMargin">
-                               <number>0</number>
-                              </property>
-                              <property name="rightMargin">
-                               <number>0</number>
-                              </property>
-                              <property name="bottomMargin">
-                               <number>0</number>
-                              </property>
-                              <item>
-                               <widget class="QPushButton" name="pushButton_2">
-                                <property name="styleSheet">
-                                 <string notr="true">QPushButton {   
- 	min-width: 170px;
-    min-height: 50px;
-    max-width: 170px;
-    max-height: 80px;
-	border: 1px solid;
-	border-radius: 7px;
-	border-color: rgb(18, 18, 29);
-	background-color: rgb(35, 36, 47);
-}</string>
-                                </property>
-                                <property name="text">
-                                 <string>LocalStorage</string>
-                                </property>
-                                <property name="flat">
-                                 <bool>true</bool>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QPushButton" name="pushButton_3">
-                                <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                                  <horstretch>0</horstretch>
-                                  <verstretch>0</verstretch>
-                                 </sizepolicy>
-                                </property>
-                                <property name="text">
-                                 <string>remove</string>
-                                </property>
-                               </widget>
-                              </item>
-                             </layout>
+                             <property name="text">
+                              <string>LocalStorage</string>
+                             </property>
+                             <property name="checkable">
+                              <bool>true</bool>
+                             </property>
+                             <property name="flat">
+                              <bool>true</bool>
+                             </property>
                             </widget>
                            </item>
                           </layout>
                          </widget>
                         </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="connection_add_remove_box">
+                       <property name="title">
+                        <string/>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_8">
                         <item>
-                         <widget class="QGroupBox" name="add_box">
-                          <property name="title">
-                           <string/>
+                         <widget class="QPushButton" name="add_connection_button">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
                           </property>
-                          <layout class="QHBoxLayout" name="horizontalLayout_9">
-                           <property name="leftMargin">
-                            <number>0</number>
-                           </property>
-                           <property name="topMargin">
-                            <number>0</number>
-                           </property>
-                           <property name="rightMargin">
-                            <number>0</number>
-                           </property>
-                           <property name="bottomMargin">
-                            <number>0</number>
-                           </property>
-                           <item>
-                            <widget class="QPushButton" name="add_connection_button">
-                             <property name="styleSheet">
-                              <string notr="true">QPushButton {
+                          <property name="styleSheet">
+                           <string notr="true">QPushButton {
 	border: none;
 	color: white;
 	text-align: center;
@@ -2133,13 +2103,43 @@ QPushButton::hover {
 QPushButton::hover {
 	background: rgb(28, 28, 39);
 }</string>
-                             </property>
-                             <property name="text">
-                              <string> Add</string>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
+                          </property>
+                          <property name="text">
+                           <string> Add</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="remove_connection_button">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">QPushButton {
+	border: none;
+	color: white;
+	text-align: center;
+    background: rgb(18, 18, 29);
+    height: 60px;
+    width: 90px;
+    padding: 2px;
+	margin-left: 5px;
+	margin-right: 5px;
+
+    border-bottom: 2px solid;
+    border-bottom-color: rgb(244, 5, 113); 
+}
+
+QPushButton::hover {
+	background: rgb(28, 28, 39);
+}</string>
+                          </property>
+                          <property name="text">
+                           <string>remove</string>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -2201,7 +2201,11 @@ QPushButton::hover {
                      <bool>false</bool>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">QGroupBox {
+                     <string notr="true">QWidget {
+	background-color: rgba(18, 18, 29, 0);
+}
+
+QGroupBox {
 	border: 1px solid;
 	border-radius: 7px;
 	border-color: rgb(18, 18, 29);
@@ -2217,8 +2221,8 @@ QLabel {
 	qproperty-alignment: AlignCenter;
 
 	border: 1px solid;
-	border-radius: 7px;
 	border-color: rgb(18, 18, 29);
+	background-color: rgb(35, 36, 47);
 
 }
 
@@ -2226,16 +2230,16 @@ QLineEdit {
 	qproperty-alignment: AlignCenter;
 
 	border: 1px solid;
-	border-radius: 7px;
 	border-color: rgb(18, 18, 29);
+	background-color: rgb(35, 36, 47);
 }
 
 QSpinBox {
 	qproperty-alignment: AlignCenter;
 
 	border: 1px solid;
-	border-radius: 7px;
 	border-color: rgb(18, 18, 29);
+	background-color: rgb(35, 36, 47);
 }</string>
                     </property>
                     <property name="title">
@@ -2255,6 +2259,9 @@ QSpinBox {
                       <spacer name="horizontalSpacer_3">
                        <property name="orientation">
                         <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeType">
+                        <enum>QSizePolicy::Preferred</enum>
                        </property>
                        <property name="sizeHint" stdset="0">
                         <size>
@@ -2286,315 +2293,355 @@ QSpinBox {
                          <number>0</number>
                         </property>
                         <item>
-                         <widget class="QGroupBox" name="Connectuin_name_box">
-                          <property name="title">
-                           <string/>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignCenter</set>
-                          </property>
-                          <property name="flat">
-                           <bool>true</bool>
-                          </property>
-                          <layout class="QHBoxLayout" name="horizontalLayout_15">
-                           <item>
-                            <widget class="QLabel" name="Connectuin_name_label">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                             <property name="text">
-                              <string>Connection name</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QLineEdit" name="Connectuin_name_value">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QGroupBox" name="Host_box">
-                          <property name="title">
-                           <string/>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignCenter</set>
-                          </property>
-                          <property name="flat">
-                           <bool>true</bool>
-                          </property>
-                          <layout class="QHBoxLayout" name="horizontalLayout_10">
-                           <item>
-                            <widget class="QLabel" name="Host_label">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                             <property name="text">
-                              <string>Host</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QLineEdit" name="Host_value">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QGroupBox" name="Port_box">
-                          <property name="title">
-                           <string/>
-                          </property>
-                          <property name="flat">
-                           <bool>true</bool>
-                          </property>
-                          <layout class="QHBoxLayout" name="horizontalLayout_11">
-                           <item>
-                            <widget class="QLabel" name="Port_label">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                             <property name="text">
-                              <string>Port</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QSpinBox" name="Port_value">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                             <property name="maximum">
-                              <number>9999999</number>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QGroupBox" name="DB_name_box">
+                         <widget class="QStackedWidget" name="connection_tabs">
                           <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                            </sizepolicy>
                           </property>
-                          <property name="title">
-                           <string/>
-                          </property>
-                          <property name="flat">
-                           <bool>true</bool>
-                          </property>
-                          <layout class="QHBoxLayout" name="horizontalLayout_12">
-                           <item>
-                            <widget class="QLabel" name="DB_name_label">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                             <property name="text">
-                              <string>db name</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QLineEdit" name="DB_name_value">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QGroupBox" name="Username_box">
-                          <property name="title">
-                           <string/>
-                          </property>
-                          <property name="flat">
-                           <bool>true</bool>
-                          </property>
-                          <layout class="QHBoxLayout" name="horizontalLayout_13">
-                           <item>
-                            <widget class="QLabel" name="Username_label">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                             <property name="text">
-                              <string>username</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QLineEdit" name="Username_value">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QGroupBox" name="Password_box">
-                          <property name="maximumSize">
+                          <property name="minimumSize">
                            <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
+                            <width>0</width>
+                            <height>0</height>
                            </size>
                           </property>
-                          <property name="title">
-                           <string/>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="flat">
-                           <bool>true</bool>
-                          </property>
-                          <layout class="QHBoxLayout" name="horizontalLayout_14">
-                           <item>
-                            <widget class="QLabel" name="Password_label">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                             <property name="text">
-                              <string>password</string>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QLineEdit" name="Password_value">
-                             <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>172</width>
-                               <height>82</height>
-                              </size>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="Connection_Action_button">
                           <property name="styleSheet">
-                           <string notr="true">QPushButton {
+                           <string notr="true"/>
+                          </property>
+                          <property name="currentIndex">
+                           <number>1</number>
+                          </property>
+                          <widget class="QWidget" name="connection_update_tab">
+                           <property name="styleSheet">
+                            <string notr="true"/>
+                           </property>
+                           <layout class="QVBoxLayout" name="verticalLayout_21">
+                            <property name="spacing">
+                             <number>0</number>
+                            </property>
+                            <property name="leftMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="topMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="rightMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="bottomMargin">
+                             <number>0</number>
+                            </property>
+                            <item>
+                             <widget class="QGroupBox" name="connection_name_box">
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignCenter</set>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_15">
+                               <item>
+                                <widget class="QLabel" name="connection_name_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Connection name</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLineEdit" name="connection_name_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QGroupBox" name="host_box">
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignCenter</set>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_10">
+                               <item>
+                                <widget class="QLabel" name="host_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Host</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLineEdit" name="host_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QGroupBox" name="port_box">
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_11">
+                               <item>
+                                <widget class="QLabel" name="port_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Port</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QSpinBox" name="port_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="maximum">
+                                  <number>9999999</number>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QGroupBox" name="db_name_box">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_12">
+                               <item>
+                                <widget class="QLabel" name="db_name_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>DB name</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLineEdit" name="db_name_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QGroupBox" name="username_box">
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_13">
+                               <item>
+                                <widget class="QLabel" name="username_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Username</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLineEdit" name="username_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QGroupBox" name="password_box">
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_14">
+                               <item>
+                                <widget class="QLabel" name="password_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Password</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLineEdit" name="password_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="connection_add_button">
+                              <property name="styleSheet">
+                               <string notr="true">QPushButton {
 	border: none;
 	color: white;
 	text-align: center;
@@ -2608,10 +2655,283 @@ QSpinBox {
 QPushButton::hover {
 	background: rgb(28, 28, 39);
 }</string>
-                          </property>
-                          <property name="text">
-                           <string>Add</string>
-                          </property>
+                              </property>
+                              <property name="text">
+                               <string>Add</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </widget>
+                          <widget class="QWidget" name="connection_info_tab">
+                           <layout class="QVBoxLayout" name="verticalLayout_22">
+                            <property name="spacing">
+                             <number>0</number>
+                            </property>
+                            <property name="leftMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="topMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="rightMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="bottomMargin">
+                             <number>0</number>
+                            </property>
+                            <item>
+                             <widget class="QGroupBox" name="info_connection_name_box">
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignCenter</set>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_47">
+                               <item>
+                                <widget class="QLabel" name="info_connection_name_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Connection name</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLineEdit" name="info_connection_name_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QGroupBox" name="info_connection_host_box">
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignCenter</set>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_48">
+                               <item>
+                                <widget class="QLabel" name="info_connection_host_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Host</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLineEdit" name="info_connection_host_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QGroupBox" name="info_connection_port_box">
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_49">
+                               <item>
+                                <widget class="QLabel" name="info_connection_port_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Port</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QSpinBox" name="info_connection_port_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="maximum">
+                                  <number>9999999</number>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QGroupBox" name="info_connection_db_name_box">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_50">
+                               <item>
+                                <widget class="QLabel" name="info_connection_db_name_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>DB name</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLineEdit" name="info_connection_db_name_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QGroupBox" name="info_connection_username_box">
+                              <property name="title">
+                               <string/>
+                              </property>
+                              <property name="flat">
+                               <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="horizontalLayout_51">
+                               <item>
+                                <widget class="QLabel" name="info_connection_username_label">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                 <property name="text">
+                                  <string>Username</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QLineEdit" name="info_connection_username_value">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                 </property>
+                                 <property name="maximumSize">
+                                  <size>
+                                   <width>172</width>
+                                   <height>82</height>
+                                  </size>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                           </layout>
+                          </widget>
                          </widget>
                         </item>
                        </layout>
@@ -2621,6 +2941,9 @@ QPushButton::hover {
                       <spacer name="horizontalSpacer_4">
                        <property name="orientation">
                         <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeType">
+                        <enum>QSizePolicy::Preferred</enum>
                        </property>
                        <property name="sizeHint" stdset="0">
                         <size>
@@ -2638,42 +2961,6 @@ QPushButton::hover {
                </item>
               </layout>
              </widget>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="show_logs_button">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normalon>:/images/show_side_bar.svg</normalon>
-               <activeoff>:/images/show_side_bar.svg</activeoff>
-               <activeon>:/images/hide_side_bar.svg</activeon>
-              </iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPlainTextEdit" name="app_logs">
-             <property name="styleSheet">
-              <string notr="true">QWidget {
-	background-color: rgb(35, 36, 47);
-
-	border: 5px solid;
-    border-color: rgb(11, 11, 18); 
-	border-radius: 7px;
-}</string>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-             <property name="backgroundVisible">
-              <bool>true</bool>
-             </property>
             </widget>
            </item>
           </layout>
@@ -2854,7 +3141,7 @@ QPushButton:checked {
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="first_Connectuin_name_box">
+            <widget class="QGroupBox" name="first_connectuin_name_box">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -2872,7 +3159,7 @@ QPushButton:checked {
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_34">
               <item>
-               <widget class="QLabel" name="first_Connectuin_name_label">
+               <widget class="QLabel" name="first_connectuin_name_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -2891,7 +3178,7 @@ QPushButton:checked {
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="first_Connectuin_name_value">
+               <widget class="QLineEdit" name="first_connectuin_name_value">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -2910,7 +3197,7 @@ QPushButton:checked {
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="first_Host_box">
+            <widget class="QGroupBox" name="first_host_box">
              <property name="title">
               <string/>
              </property>
@@ -2922,7 +3209,7 @@ QPushButton:checked {
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_35">
               <item>
-               <widget class="QLabel" name="first_Host_label">
+               <widget class="QLabel" name="first_host_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -2941,7 +3228,7 @@ QPushButton:checked {
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="first_Host_value">
+               <widget class="QLineEdit" name="first_host_value">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -2960,7 +3247,7 @@ QPushButton:checked {
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="first_Port_box">
+            <widget class="QGroupBox" name="first_port_box">
              <property name="title">
               <string/>
              </property>
@@ -2969,7 +3256,7 @@ QPushButton:checked {
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_36">
               <item>
-               <widget class="QLabel" name="first_Port_label">
+               <widget class="QLabel" name="first_port_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -2988,7 +3275,7 @@ QPushButton:checked {
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="first_Port_value">
+               <widget class="QSpinBox" name="first_port_value">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -3010,7 +3297,7 @@ QPushButton:checked {
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="first_DB_name_box">
+            <widget class="QGroupBox" name="first_db_name_box">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -3025,7 +3312,7 @@ QPushButton:checked {
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_37">
               <item>
-               <widget class="QLabel" name="first_DB_name_label">
+               <widget class="QLabel" name="first_db_name_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -3044,7 +3331,7 @@ QPushButton:checked {
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="first_DB_name_value">
+               <widget class="QLineEdit" name="first_db_name_value">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -3063,7 +3350,7 @@ QPushButton:checked {
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="first_Username_box">
+            <widget class="QGroupBox" name="first_username_box">
              <property name="title">
               <string/>
              </property>
@@ -3072,7 +3359,7 @@ QPushButton:checked {
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_38">
               <item>
-               <widget class="QLabel" name="first_Username_label">
+               <widget class="QLabel" name="first_username_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -3091,7 +3378,7 @@ QPushButton:checked {
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="first_Username_value">
+               <widget class="QLineEdit" name="first_username_value">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -3110,7 +3397,7 @@ QPushButton:checked {
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="first_Password_box">
+            <widget class="QGroupBox" name="first_password_box">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -3128,7 +3415,7 @@ QPushButton:checked {
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_39">
               <item>
-               <widget class="QLabel" name="first_Password_label">
+               <widget class="QLabel" name="first_password_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -3147,7 +3434,7 @@ QPushButton:checked {
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="first_Password_value">
+               <widget class="QLineEdit" name="first_password_value">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -3228,7 +3515,7 @@ QLineEdit {
 }</string>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="login_user_tab">
            <layout class="QHBoxLayout" name="horizontalLayout_41">
@@ -3688,6 +3975,42 @@ QPushButton::hover {
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="show_logs_button">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normalon>:/images/show_side_bar.svg</normalon>
+        <activeoff>:/images/show_side_bar.svg</activeoff>
+        <activeon>:/images/hide_side_bar.svg</activeon>
+       </iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPlainTextEdit" name="app_logs">
+      <property name="styleSheet">
+       <string notr="true">QWidget {
+	background-color: rgb(35, 36, 47);
+
+	border: 5px solid;
+    border-color: rgb(11, 11, 18); 
+	border-radius: 7px;
+}</string>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+      <property name="backgroundVisible">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>

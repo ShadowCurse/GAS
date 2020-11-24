@@ -10,25 +10,25 @@ class GuiCore final : public QObject {
  public:
   GuiCore() : QObject() {
     // create resourece tree
-    connect(&gui, &GasGui::signal_create_resource_tree, this,
-            &GuiCore::slot_create_resource_tree);
-    connect(this, &GuiCore::signal_draw_resource_tree, &gui,
-            &GasGui::slot_draw_resource_tree);
-    // get resource info
-    connect(&gui, &GasGui::signal_create_resource_info, this,
-            &GuiCore::slot_create_resource_info);
-    connect(this, &GuiCore::signal_draw_resource_info, &gui,
-            &GasGui::slot_draw_resource_info);
-    // create commits list
-    connect(&gui, &GasGui::signal_create_commits_list, this,
-            &GuiCore::slot_create_commits_list);
-    connect(this, &GuiCore::signal_draw_commit_list, &gui,
-            &GasGui::slot_draw_commits_list);
-    // get commit info
-    connect(&gui, &GasGui::signal_create_commit_info, this,
-            &GuiCore::slot_create_commit_info);
-    connect(this, &GuiCore::signal_draw_commit_info, &gui,
-            &GasGui::slot_draw_commit_info);
+//    connect(&gui, &GasGui::signal_create_resource_tree, this,
+//            &GuiCore::slot_create_resource_tree);
+//    connect(this, &GuiCore::signal_draw_resource_tree, &gui,
+//            &GasGui::slot_draw_resource_tree);
+//    // get resource info
+//    connect(&gui, &GasGui::signal_create_resource_info, this,
+//            &GuiCore::slot_create_resource_info);
+//    connect(this, &GuiCore::signal_draw_resource_info, &gui,
+//            &GasGui::slot_draw_resource_info);
+//    // create commits list
+//    connect(&gui, &GasGui::signal_create_commits_list, this,
+//            &GuiCore::slot_create_commits_list);
+//    connect(this, &GuiCore::signal_draw_commit_list, &gui,
+//            &GasGui::slot_draw_commits_list);
+//    // get commit info
+//    connect(&gui, &GasGui::signal_create_commit_info, this,
+//            &GuiCore::slot_create_commit_info);
+//    connect(this, &GuiCore::signal_draw_commit_info, &gui,
+//            &GasGui::slot_draw_commit_info);
   }
 
   ~GuiCore() final = default;
