@@ -32,7 +32,9 @@ if(ANDROID)
     gas_gui.cpp
     gas_gui.hpp
     gui_core.hpp
+    gui_core.cpp
     mainwindow.ui
+    images.qrc
   )
 else()
   add_executable(gas_gui
@@ -40,9 +42,11 @@ else()
     gas_gui.cpp
     gas_gui.hpp
     gui_core.hpp
+    gui_core.cpp
     mainwindow.ui
     images.qrc
   )
 endif()
 
 target_link_libraries(gas_gui PRIVATE Qt5::Widgets)
+target_compile_options(gas_gui PRIVATE -Og)

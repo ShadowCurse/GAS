@@ -7,97 +7,76 @@
 
 class GuiCore final : public QObject {
   Q_OBJECT
- public:
-  GuiCore() : QObject() {
-    // create resourece tree
-//    connect(&gui, &GasGui::signal_create_resource_tree, this,
-//            &GuiCore::slot_create_resource_tree);
-//    connect(this, &GuiCore::signal_draw_resource_tree, &gui,
-//            &GasGui::slot_draw_resource_tree);
-//    // get resource info
-//    connect(&gui, &GasGui::signal_create_resource_info, this,
-//            &GuiCore::slot_create_resource_info);
-//    connect(this, &GuiCore::signal_draw_resource_info, &gui,
-//            &GasGui::slot_draw_resource_info);
-//    // create commits list
-//    connect(&gui, &GasGui::signal_create_commits_list, this,
-//            &GuiCore::slot_create_commits_list);
-//    connect(this, &GuiCore::signal_draw_commit_list, &gui,
-//            &GasGui::slot_draw_commits_list);
-//    // get commit info
-//    connect(&gui, &GasGui::signal_create_commit_info, this,
-//            &GuiCore::slot_create_commit_info);
-//    connect(this, &GuiCore::signal_draw_commit_info, &gui,
-//            &GasGui::slot_draw_commit_info);
-  }
 
+ public:
+  using id_type = GasGui::id_type;
+  using connector_info = GasGui::connector_info;
+  using login_info = GasGui::login_info;
+  using create_user_info = GasGui::create_user_info;
+
+  using resource_create_type = GasGui::resource_create_type;
+  using resource_update_type = GasGui::resource_update_type;
+  using resource_download_type = GasGui::resource_download_type;
+  using resource_delete_type = GasGui::resource_delete_type;
+
+  using resource_tree_type = GasGui::resource_tree_type;
+  using commits_list_type = GasGui::commits_list_type;
+  using users_list_type = GasGui::users_list_type;
+  using logs_list_type = GasGui::logs_list_type;
+
+  using resource_info_type = GasGui::resource_info_type;
+  using commit_info_type = GasGui::commit_info_type;
+
+ public:
+  GuiCore();
   ~GuiCore() final = default;
 
   auto show_gui() -> void { gui.show(); }
 
  public slots:
 
-  void slot_add_storage() {}
-  void slot_remove_storage() {}
-  void slot_connect_storage() {}
-  void slot_disconnect_storage() {}
+  void slot_first_connect(connector_info);
+  void slot_first_login(login_info);
+  void slot_first_create_user(create_user_info);
 
-  void slot_create_resource() {}
-  void slot_update_resource() {}
-  void slot_download_resource() {}
-  void slot_remove_resource() {}
+  void slot_connector_state_change(id_type, bool);
 
-  void slot_create_resource_tree() {
-    // if !connectors.empty() {
-    //  auto resourece_type_view = View<ResourceType>();
-    //  for (const auto& type: resource_type_view)
-    //      tree.add_head_node(type);
-    //  auto resourece_view = View<Resource>();
-    //  for (const auto& res: resource_view)
-    //      tree[res.type].add_node(res);
-    //}
+  void slot_create_resource_tree();
+  void slot_create_commits_list();
+  void slot_create_users_list();
+  void slot_create_logs_list();
 
-    std::vector<std::pair<QString, std::vector<std::pair<int, QString>>>> tree =
-        {{"Textures", {{1, "Texture1"}, {2, "Texture2"}}},
-         {"Meshes", {{3, "M1"}, {4, "M2"}}}};
-    emit signal_draw_resource_tree(std::move(tree));
-  }
-  void slot_create_commits_list() {
-    emit signal_draw_commit_list(
-        {{1, {"name", "Pog"}}, {2, {"description", "pog texture"}}});
-  }
-  void slot_create_logs_list() {}
+  void slot_send_resource_info(id_type);
+  void slot_send_commit_info(id_type);
+  void slot_send_user_info(id_type);
 
-  // called when user clicks on particularr resource
-  // presents resource info on scrollable widget and fills commits and
-  // dependencies info in tabwidget
-  void slot_create_resource_info(int id) {
-    if (id == 1)
-      emit signal_draw_resource_info(
-          {{"name", "Pog"}, {"description", "pog texture"}});
-    else if (id == 2)
-      emit signal_draw_resource_info(
-          {{"name", "Pog2"}, {"description", "pog texture2"}});
-  }
+  void slot_add_new_resource(resource_create_type);
+  void slot_update_resource(resource_update_type);
+  void slot_download_resource(resource_download_type);
+  void slot_remove_resource(resource_delete_type);
 
-  void slot_create_commit_info(int id) {
-    if (id == 1)
-      emit signal_draw_commit_info(
-          {{"name", "Pog"}, {"description", "pog texture"}});
-    else if (id == 2)
-      emit signal_draw_commit_info(
-          {{"name", "Pog2"}, {"description", "pog texture2"}});
-  }
+  void slot_send_connector_settings(id_type);
+  void slot_create_connector(connector_info);
+  void slot_remove_connector(id_type);
 
  signals:
 
-  void signal_draw_resource_tree(
-      std::vector<std::pair<QString, std::vector<std::pair<int, QString>>>>
-          resourece_tree);
-  void signal_draw_resource_info(std::vector<std::pair<QString, QString>> info);
+  void signal_starting_connection_state_change(bool);
+  void signal_accept_user();
+  void signal_deny_user();
 
-  void signal_draw_commit_list(std::vector<std::pair<int, std::pair<QString, QString>>> commit_list);
-  void signal_draw_commit_info(std::vector<std::pair<QString, QString>> info);
+  void signal_draw_resource_tree(resource_tree_type);
+  void signal_draw_commits_list(commits_list_type);
+  void signal_draw_users_list(users_list_type);
+  void signal_draw_logs_list(logs_list_type);
+
+  void signal_send_connector_settings(connector_info);
+  void signal_create_connector(connector_info);
+  void signal_remove_connector(id_type);
+
+  void signal_log_message(std::string);
+  void signal_log_warning(std::string);
+  void signal_log_error(std::string);
 
  private:
   GasGui gui;
