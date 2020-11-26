@@ -63,7 +63,7 @@ TEST(Connector, empty_query_fail) {
   ASSERT_TRUE(connector.connect());
   ASSERT_TRUE(connector.connected());
 
-  auto res = connector.exec(Developer::developer_query(""));
+  auto res = connector.exec(User::user_query(""));
   EXPECT_EQ(static_cast<bool>(res), false);
 }
 
@@ -79,7 +79,7 @@ TEST(Connector, error_query_fail) {
   ASSERT_EQ(connector.connect(), true);
   ASSERT_EQ(connector.connected(), true);
 
-  auto res = connector.exec(Developer::developer_query("qwe ewq ewq eqw"));
+  auto res = connector.exec(User::user_query("qwe ewq ewq eqw"));
   EXPECT_EQ(static_cast<bool>(res), false);
 }
 
@@ -95,11 +95,11 @@ TEST(Connector, select_pass) {
   ASSERT_TRUE(connector.connect());
   ASSERT_TRUE(connector.connected());
 
-  auto query = Developer::get_all();
+  auto query = User::get_all();
   auto res = connector.exec(query);
   EXPECT_EQ(static_cast<bool>(res), true);
   EXPECT_GT((*res).size(), 0);
-  auto values = res->cast<Developer>();
+  auto values = res->cast<User>();
   EXPECT_GT(values.size(), 0);
 }
 
@@ -115,11 +115,11 @@ TEST(Connector, insert_pass) {
   ASSERT_TRUE(connector.connect());
   ASSERT_TRUE(connector.connected());
 
-  auto query = Developer::insert("test", "test", "test");
+  auto query = User::insert("test", "test", "test");
   auto res = connector.exec(query);
   EXPECT_EQ(static_cast<bool>(res), true);
   EXPECT_EQ((*res).size(), 0);
-  auto values = res->cast<Developer>();
+  auto values = res->cast<User>();
   EXPECT_EQ(values.size(), 0);
 }
 
@@ -135,11 +135,11 @@ TEST(Connector, delete_pass) {
   ASSERT_TRUE(connector.connect());
   ASSERT_TRUE(connector.connected());
 
-  auto query = Developer::remove("test");
+  auto query = User::remove("test");
   auto res = connector.exec(query);
   EXPECT_EQ(static_cast<bool>(res), true);
   EXPECT_EQ((*res).size(), 0);
-  auto values = res->cast<Developer>();
+  auto values = res->cast<User>();
   EXPECT_EQ(values.size(), 0);
 }
 
@@ -288,12 +288,12 @@ TEST(Connector, test_notifications) {
   EXPECT_EQ(connector.enable_notifications(), true);
   EXPECT_EQ(connector.notifications_enabled(), true);
 
-  auto query = Developer::insert("test", "test", "test");
+  auto query = User::insert("test", "test", "test");
   for (int i{0}; i < 3; ++i) {
     auto res = connector.exec(query);
     EXPECT_EQ(static_cast<bool>(res), true);
     EXPECT_EQ((*res).size(), 0);
-    auto values = res->cast<Developer>();
+    auto values = res->cast<User>();
     EXPECT_EQ(values.size(), 0);
   }
   EXPECT_EQ(connector.disable_notifications(), true);

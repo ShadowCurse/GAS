@@ -12,7 +12,7 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-class GasGui : public QMainWindow {
+class GasGui final : public QMainWindow {
   Q_OBJECT
 
  public:
@@ -44,44 +44,42 @@ class GasGui : public QMainWindow {
     std::vector<std::string> dependencies;
   };
   struct resource_tree_node_type {
-      std::string name;
-      std::vector<std::pair<id_type, std::string>> children;
+    std::string name;
+    std::vector<std::pair<id_type, std::string>> children;
   };
-  using resource_tree_type =
-      std::vector<resource_tree_node_type>;
+  using resource_tree_type = std::vector<resource_tree_node_type>;
 
   // commit
   struct commit_info_type {
-      id_type id{};
-      std::string username;
-      std::string resource_name;
-      std::string date;
-      std::string message;
+    id_type id{};
+    std::string username;
+    std::string resource_name;
+    std::string date;
+    std::string message;
   };
   struct commit_list_node {
-      id_type id{};
-      std::string date;
-      std::string message;
+    id_type id{};
+    std::string date;
+    std::string message;
   };
-  using commits_list_type =
-      std::vector<commit_list_node>;
+  using commits_list_type = std::vector<commit_list_node>;
 
   // users
   struct user_info_type {
-      std::string name;
-      std::string email;
-      std::string description;
+    std::string name;
+    std::string email;
+    std::string description;
   };
   struct user_list_node {
-      id_type id{};
-      std::string name;
+    id_type id{};
+    std::string name;
   };
   using users_list_type = std::vector<user_list_node>;
 
   // logs
   struct log_list_node {
-      std::string date;
-      std::string message;
+    std::string date;
+    std::string message;
   };
   using logs_list_type = std::vector<log_list_node>;
 
@@ -115,8 +113,8 @@ class GasGui : public QMainWindow {
   };
 
  public:
-  GasGui(QWidget *parent = nullptr);
-  ~GasGui();
+  explicit GasGui(QWidget *parent = nullptr);
+  ~GasGui() final;
 
  public slots:
 

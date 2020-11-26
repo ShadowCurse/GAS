@@ -10,7 +10,7 @@
 namespace gas {
 
 using StorageCache =
-    StorageCache_T<Log, Developer, ResourceType, Resource, Dependency, Commit>;
+    StorageCache_T<Log, User, ResourceType, Resource, Dependency, Commit>;
 
 template <typename ... Types>
 class StorageUnit_T {
@@ -105,7 +105,7 @@ class StorageUnit_T {
 
   std::map<std::string_view, std::function<void()>> callback_map = {
       {"log", [this] { update<Log>(); }},
-      {"developer", [this] { update<Developer>(); }},
+      {"developer", [this] { update<User>(); }},
       {"resourcetype", [this] { update<ResourceType>(); }},
       {"resource", [this] { update<Resource>(); }},
       {"dependency", [this] { update<Dependency>(); }},
@@ -113,7 +113,7 @@ class StorageUnit_T {
   };
 };
 
-using StorageUnit = StorageUnit_T<Log, Developer, ResourceType, Resource, Dependency, Commit>;
+using StorageUnit = StorageUnit_T<Log, User, ResourceType, Resource, Dependency, Commit>;
 
 template <typename T>
 class View {

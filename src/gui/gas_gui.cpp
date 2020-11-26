@@ -9,16 +9,6 @@
 GasGui::GasGui(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
-  // TEST
-//  connector_info info;
-//  info.id = 0;
-//  info.name = "Connector1";
-
-//  slot_create_connector(info);
-//  info.id = 1;
-//  info.name = "Connector2";
-//  slot_create_connector(info);
-
   ui->resource_tree->setColumnCount(1);
   ui->resource_commits->setColumnCount(2);
   ui->commit_list->setColumnCount(2);
@@ -39,8 +29,6 @@ GasGui::GasGui(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
           [&]() { ui->main_window_tabs->setCurrentIndex(1); });
 
   // logs panel
-  // hiding at startup
-  //  ui->app_logs->hide();
   connect(ui->show_logs_button, &QPushButton::clicked, [&](bool checked) {
     checked ? ui->app_logs->show() : ui->app_logs->hide();
   });
@@ -374,8 +362,8 @@ void GasGui::slot_prepare_for_new_connector_settings() {
 void GasGui::slot_request_connector_settings() {
   auto caller = static_cast<QPushButton*>(sender());
   if (!caller->isChecked()) {
-      caller->setChecked(true);
-      return;
+    caller->setChecked(true);
+    return;
   }
   for (const auto& setting_button : connections_settings_ids)
     if (setting_button.first != caller) setting_button.first->setChecked(false);

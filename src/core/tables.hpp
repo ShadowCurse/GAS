@@ -25,36 +25,36 @@ struct Log {
   std::string description;
 };
 
-struct Developer {
-  using developer_query = Query<int, std::string, std::string, std::string>;
+struct User {
+  using user_query = Query<int, std::string, std::string, std::string>;
 
-  explicit Developer(
+  explicit User(
       const std::tuple<int, std::string, std::string, std::string> &args) {
-    std::tie(id, name, email, description) = args;
+    std::tie(id, username, email, description) = args;
   }
 
   [[nodiscard]] static auto get_all() {
-    return developer_query("select * from developer;");
+    return user_query("select * from developer;");
   }
   [[nodiscard]] static auto get_named(std::string_view name) {
-    return developer_query(
+    return user_query(
         fmt::format("select * from developer where name = '{}'", name));
   }
   [[nodiscard]] static auto insert(std::string_view name,
                                    std::string_view email,
                                    std::string_view description) {
-    return developer_query(
+    return user_query(
         fmt::format("insert into developer(name, email, description) values "
                     "('{}', '{}', '{}');",
                     name, email, description));
   }
   [[nodiscard]] static auto remove(std::string_view name) {
-    return developer_query(
+    return user_query(
         fmt::format("delete from developer where name = '{}';", name));
   }
 
   int id{};
-  std::string name;
+  std::string username;
   std::string email;
   std::string description;
 };

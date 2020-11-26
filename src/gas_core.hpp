@@ -3,9 +3,10 @@
 
 #include <QObject>
 
-#include "gas_gui.hpp"
+#include "core/core.hpp"
+#include "gui/gas_gui.hpp"
 
-class GuiCore final : public QObject {
+class GasCore final : public QObject {
   Q_OBJECT
 
  public:
@@ -26,10 +27,11 @@ class GuiCore final : public QObject {
 
   using resource_info_type = GasGui::resource_info_type;
   using commit_info_type = GasGui::commit_info_type;
+  using user_info_type = GasGui::user_info_type;
 
  public:
-  GuiCore();
-  ~GuiCore() final = default;
+  GasCore();
+  ~GasCore() final = default;
 
   auto show_gui() -> void { gui.show(); }
 
@@ -70,6 +72,10 @@ class GuiCore final : public QObject {
   void signal_draw_users_list(users_list_type);
   void signal_draw_logs_list(logs_list_type);
 
+  void signal_draw_resource_info(resource_info_type);
+  void signal_draw_commit_info(commit_info_type);
+  void signal_draw_users_info(user_info_type);
+
   void signal_send_connector_settings(connector_info);
   void signal_create_connector(connector_info);
   void signal_remove_connector(id_type);
@@ -80,8 +86,7 @@ class GuiCore final : public QObject {
 
  private:
   GasGui gui;
-  // gas::Core core;
-  // ...
+  gas::Core core;
 };
 
 #endif  // RESOURCE_TREE_H
