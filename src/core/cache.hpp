@@ -9,6 +9,9 @@ namespace gas {
 
 template <typename T>
 struct CacheUnit {
+ public:
+  using search_fun = std::function<bool(const T&)>;
+ protected:
   virtual ~CacheUnit() = default;
   std::vector<T> data;
   std::mutex mutex;
@@ -21,8 +24,7 @@ class CacheView {
   using iterator = typename data::iterator;
 
  public:
-  explicit CacheView(std::vector<T>& cache_data)
-      : cache_data_(cache_data) {}
+  explicit constexpr CacheView(std::vector<T>& cache_data) : cache_data_(cache_data) {}
 
   [[nodiscard]] constexpr auto begin() const { return std::begin(cache_data_); }
   [[nodiscard]] constexpr auto end() const { return std::end(cache_data_); }
@@ -36,17 +38,26 @@ class CacheView {
 template <typename... Types>
 class StorageCache_T final : public CacheUnit<Types>... {
  public:
-  StorageCache_T() = default;
+  template <typename T>
+  using search_fun = typename CacheUnit<T>::search_fun;
+
+ public:
+  constexpr StorageCache_T() = default;
   ~StorageCache_T() final = default;
 
   template <typename T>
-  auto put(std::vector<T> data) {
+  constexpr auto put(std::vector<T> data) -> void {
     std::lock_guard lk(CacheUnit<T>::mutex);
     CacheUnit<T>::data = std::move(data);
   }
   template <typename T>
-  auto get() const {
-    return CacheUnit<T>::data;
+  [[nodiscard]] constexpr auto search(search_fun<T> fun) const
+      -> std::optional<const std::reference_wrapper<const T>> {
+    if (auto result = std::find_if(std::begin(CacheUnit<T>::data),
+                                   std::end(CacheUnit<T>::data), fun);
+        result != std::end(CacheUnit<T>::data))
+      return *result;
+    return std::nullopt;
   }
   template <typename T>
   [[nodiscard]] constexpr auto get_cache_view() -> CacheView<T> {

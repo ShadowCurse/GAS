@@ -1,3 +1,6 @@
+--################## Required extension for passwords ########################
+create extension pgcrypto;
+
 --################## Creating tables ########################
 create table logs
 (
@@ -6,12 +9,13 @@ create table logs
     description text                                         not null
 );
 
-create table developer
+create table users
 (
     id          int generated always as identity primary key not null,
-    name        text                                         not null,
+    username    text                                         not null unique,
+    password    text                                         not null,
     email       text                                         not null,
-    description text                                         not null
+    description text
 );
 
 create table resourcetype
@@ -44,11 +48,11 @@ create table dependency
 create table commits
 (
     id       int generated always as identity primary key not null,
-    dev      int                                          not null,
+    "user"     int                                          not null,
     resource int                                          not null,
     date     timestamp                                    not null,
     message  text,
-    foreign key (dev) references developer (id) on delete cascade,
+    foreign key ("user") references users (id) on delete cascade,
     foreign key (resource) references resource (id) on delete cascade
 );
 
@@ -58,5 +62,5 @@ drop table commits;
 drop table dependency;
 drop table resource;
 drop table resourcetype;
-drop table developer;
+drop table users;
 drop table logs;

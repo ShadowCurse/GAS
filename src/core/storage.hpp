@@ -12,7 +12,7 @@ namespace gas {
 using StorageCache =
     StorageCache_T<Log, User, ResourceType, Resource, Dependency, Commit>;
 
-template <typename ... Types>
+template <typename... Types>
 class StorageUnit_T {
  public:
   using storage_id = uint32_t;
@@ -43,14 +43,13 @@ class StorageUnit_T {
   template <typename T>
   auto update() -> bool {
     if (connector_.connected()) {
-      if (auto result = connector_.exec(T::get_all())) {
+      if (auto result = connector_.exec(T::select_all())) {
         cache_.put(result->template cast<T>());
         return true;
       }
     }
     return false;
   }
-
   auto update_all() -> bool {
     if (connector_.connected()) {
       return (update<Types>() || ...);
@@ -69,6 +68,11 @@ class StorageUnit_T {
   template <typename T>
   auto remove(const T& data) {
     connector_.exec(data.remove_query());
+  }
+
+  template <typename T>
+  auto search(StorageCache::search_fun<T> fun) {
+    return cache_.search<T>(fun);
   }
 
   auto create_resource(Resource& resource, std::string_view file_path) {
@@ -113,7 +117,8 @@ class StorageUnit_T {
   };
 };
 
-using StorageUnit = StorageUnit_T<Log, User, ResourceType, Resource, Dependency, Commit>;
+using StorageUnit =
+    StorageUnit_T<Log, User, ResourceType, Resource, Dependency, Commit>;
 
 template <typename T>
 class View {
@@ -236,10 +241,11 @@ class Storage {
         result != std::end(storages_))
       (*result)->disconnect();
   }
-  auto get_storage(StorageUnit::storage_id id) -> std::optional<std::shared_ptr<StorageUnit>> {
+  auto get_storage(StorageUnit::storage_id id)
+      -> std::optional<std::shared_ptr<StorageUnit>> {
     if (auto result = std::find_if(
-          std::begin(storages_), std::end(storages_),
-          [&id](const auto& storage) { return storage->id() == id; });
+            std::begin(storages_), std::end(storages_),
+            [&id](const auto& storage) { return storage->id() == id; });
         result != std::end(storages_))
       return (*result);
     return std::nullopt;
