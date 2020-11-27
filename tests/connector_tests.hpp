@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <atomic>
+#include <string>
 
 #include "core/connector.hpp"
 #include "core/settings.hpp"
@@ -133,7 +134,7 @@ TEST(Connector, delete_pass) {
   ASSERT_TRUE(connector.connect());
   ASSERT_TRUE(connector.connected());
 
-  auto query = User::remove_by_id(0);
+  auto query = User::remove_by_username( "test");
   auto res = connector.exec(query);
   ASSERT_EQ(static_cast<bool>(res), true);
   EXPECT_EQ((*res).size(), 0);
@@ -284,15 +285,19 @@ TEST(Connector, test_notifications) {
   EXPECT_EQ(connector.enable_notifications(), true);
   EXPECT_EQ(connector.notifications_enabled(), true);
 
-  auto query = User::insert("test", "test", "test", "test");
   for (int i{0}; i < 3; ++i) {
-    auto res = connector.exec(query);
+    auto query_insert = User::insert("test", "test", "test", "test");
+    auto res = connector.exec(query_insert);
     ASSERT_EQ(static_cast<bool>(res), true);
     EXPECT_EQ((*res).size(), 0);
+    auto query_delete = User::remove_by_username( "test");
+    auto res_d = connector.exec(query_delete);
+    ASSERT_EQ(static_cast<bool>(res_d), true);
+    EXPECT_EQ((*res_d).size(), 0);
   }
   EXPECT_EQ(connector.disable_notifications(), true);
   EXPECT_EQ(connector.notifications_enabled(), false);
-  EXPECT_EQ(count, 3);
+  EXPECT_EQ(count, 6);
 }
 
 #endif  // GAS_TESTS_CONNECTOR_TESTS_HPP_

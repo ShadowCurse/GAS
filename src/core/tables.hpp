@@ -36,7 +36,7 @@ struct User {
   }
 
   [[nodiscard]] static auto select_all() {
-    return user_query("select (id, username, email, description) from users;");
+    return user_query("select id, username, email, description from users;");
   }
   [[nodiscard]] static auto select_by_id(int id) {
     return user_query(
@@ -48,12 +48,16 @@ struct User {
                                    std::string_view description) {
     return no_return_query(
         fmt::format("insert into users(username, password, email, description) values "
-                    "('{}', crypt('{}', public.gen_salt('md5')), '{}', '{}');",
+                    "('{}', crypt('{}', gen_salt('md5')), '{}', '{}');",
                     username, password, email, description));
   }
   [[nodiscard]] static auto remove_by_id(int id) {
     return no_return_query(
         fmt::format("delete from users where id = '{}';", id));
+  }
+  [[nodiscard]] static auto remove_by_username(std::string_view username) {
+    return no_return_query(
+        fmt::format("delete from users where username = '{}';", username));
   }
 
   int id{};

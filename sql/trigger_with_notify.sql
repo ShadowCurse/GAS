@@ -1,29 +1,29 @@
 -- TODO find out why new.name returns null
 -- listen gas_channel; <~ need to listen to this channel in the app
-create or replace function on_developer_update() returns trigger as
+create or replace function on_users_update() returns trigger as
 $$
 begin
     -- log
     if lower(tg_op) = 'insert' or lower(tg_op) = 'update'
     then
         insert into logs (date, description)
-        values ((select current_date), concat(lower(tg_op), ' developer ', new.name));
+        values ((select current_date), concat(lower(tg_op), ' user ', new.username));
     elseif lower(tg_op) = 'delete'
     then
         insert into logs (date, description)
-        values ((select current_date), concat(lower(tg_op), ' developer ', old.name));
+        values ((select current_date), concat(lower(tg_op), ' user ', old.username));
     end if;
     -- notify
-    notify gas_channel, 'developer';
+    notify gas_channel, 'user';
     return new;
 end;
 $$
     language plpgsql;
 
-create trigger developer_update
+create trigger users_update
     after insert or update or delete
-    on developer
-execute procedure on_developer_update();
+    on users
+execute procedure on_users_update();
 
 create or replace function on_resourcetype_update() returns trigger as
 $$
@@ -70,7 +70,7 @@ end;
 $$
     language plpgsql;
 
-create trigger developer_update
+create trigger resource_update
     after insert or update or delete
     on resource
 execute procedure on_resource_update();
