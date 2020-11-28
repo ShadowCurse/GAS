@@ -19,7 +19,7 @@ struct Log {
   }
 
   [[nodiscard]] static auto select_all() {
-    return log_query("select (id, date, description) from logs;");
+    return log_query("select id, date, description from logs;");
   }
 
   int id{};
@@ -39,17 +39,18 @@ struct User {
     return user_query("select id, username, email, description from users;");
   }
   [[nodiscard]] static auto select_by_id(int id) {
-    return user_query(
-        fmt::format("select (id, username, email, description) from users where id = '{}'", id));
+    return user_query(fmt::format(
+        "select id, username, email, description from users where id = '{}';",
+        id));
   }
   [[nodiscard]] static auto insert(std::string_view username,
                                    std::string_view password,
                                    std::string_view email,
                                    std::string_view description) {
-    return no_return_query(
-        fmt::format("insert into users(username, password, email, description) values "
-                    "('{}', crypt('{}', gen_salt('md5')), '{}', '{}');",
-                    username, password, email, description));
+    return no_return_query(fmt::format(
+        "insert into users(username, password, email, description) values "
+        "('{}', crypt('{}', gen_salt('md5')), '{}', '{}');",
+        username, password, email, description));
   }
   [[nodiscard]] static auto remove_by_id(int id) {
     return no_return_query(
@@ -74,7 +75,20 @@ struct ResourceType {
   }
 
   [[nodiscard]] static auto select_all() {
-    return resourcetype_query("select (id, name) from resourecetype;");
+    return resourcetype_query("select id, name from resourcetype;");
+  }
+
+  [[nodiscard]] auto insert_query() const {
+    return no_return_query(
+        fmt::format("insert into resourcetype(name) values ('{}');", name));
+  }
+  [[nodiscard]] auto update_query() const {
+    return no_return_query(
+        fmt::format("update resourcetype set name = '{}' where id = '{}';", id));
+  }
+  [[nodiscard]] auto remove_query() const {
+    return no_return_query(
+        fmt::format("delete from resourcetype where id = '{}';", id));
   }
 
   int id{};
@@ -83,13 +97,15 @@ struct ResourceType {
 
 struct Resource {
   using resource_query =
-      Query<int, std::string, std::string, uint64_t , int, uint>;
+      Query<int, std::string, std::string, uint64_t, int, uint>;
 
-  explicit Resource(const std::tuple<int, std::string, std::string, uint64_t , int, uint> &args) {
+  explicit Resource(const std::tuple<int, std::string, std::string, uint64_t,
+                                     int, uint> &args) {
     std::tie(id, name, description, size, type, data) = args;
   }
   [[nodiscard]] static auto select_all() {
-    return resource_query("select (id, name, description, size, type) from resource;");
+    return resource_query(
+        "select id, name, description, size, type, data from resource;");
   }
 
   [[nodiscard]] auto insert_query() const {
@@ -103,12 +119,12 @@ struct Resource {
     return no_return_query(
         fmt::format("update resource set name = '{}',"
                     "description = '{}', size = '{}', type = "
-                    "'{}', data = '{}' where id = '{}'",
+                    "'{}', data = '{}' where id = '{}';",
                     name, description, size, type, data, id));
   }
   [[nodiscard]] auto remove_query() const {
     return no_return_query(
-        fmt::format("delete from resource where id = '{}'", id));
+        fmt::format("delete from resource where id = '{}';", id));
   }
 
   int id{};
@@ -126,7 +142,14 @@ struct Dependency {
     std::tie(id, requesting_resource, required_resource) = args;
   }
   [[nodiscard]] static auto select_all() {
-    return dependency_query("select (id, requesting_resource, required_resource) from dependecy;");
+    return dependency_query(
+        "select id, requesting_resource, required_resource from dependency;");
+  }
+  [[nodiscard]] auto insert_query() const {
+    return no_return_query(
+        fmt::format("insert into dependency(requesting_resource, "
+                    "required_resource) values ('{}', '{}');",
+                    requesting_resource, required_resource));
   }
 
   int id{};
@@ -139,14 +162,15 @@ struct Commit {
 
   explicit Commit(
       const std::tuple<int, int, int, std::string, std::string> &args) {
-    std::tie(id, developer, resource, date, message) = args;
+    std::tie(id, user, resource, date, message) = args;
   }
   [[nodiscard]] static auto select_all() {
-    return commit_query("select (id, developer, resource, date, message) from commits;");
+    return commit_query(
+        "select id, user, resource, date, message from commits;");
   }
 
   int id{};
-  int developer{};
+  int user{};
   int resource{};
   std::string date;
   std::string message;

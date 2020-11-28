@@ -2,6 +2,7 @@
 
 #include "connector_tests.hpp"
 #include "cache_tests.hpp"
+#include "storage_tests.hpp"
 
 auto main(int argc, char** argv) -> int {
   ::testing::InitGoogleTest(&argc, argv);

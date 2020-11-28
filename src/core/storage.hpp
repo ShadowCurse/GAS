@@ -16,6 +16,8 @@ template <typename... Types>
 class StorageUnit_T {
  public:
   using storage_id = uint32_t;
+
+ public:
   StorageUnit_T(storage_id id, Settings settings)
       : id_(id), connector_(std::move(settings)) {}
 
@@ -52,22 +54,22 @@ class StorageUnit_T {
   }
   auto update_all() -> bool {
     if (connector_.connected()) {
-      return (update<Types>() || ...);
+      return (update<Types>() && ...);
     }
     return false;
   }
 
   template <typename T>
-  auto insert(const T& data) {
-    connector_.exec(data.insert_query());
+  auto insert(const T& data) -> bool {
+    return connector_.exec(data.insert_query()).has_value();
   }
   template <typename T>
-  auto update(const T& data) {
-    connector_.exec(data.update_query());
+  auto update(const T& data) -> bool {
+    return connector_.exec(data.update_query()).has_value();
   }
   template <typename T>
-  auto remove(const T& data) {
-    connector_.exec(data.remove_query());
+  auto remove(const T& data) -> bool {
+    return connector_.exec(data.remove_query()).has_value();
   }
 
   template <typename T>

@@ -21,7 +21,7 @@ create table users
 create table resourcetype
 (
     id   int generated always as identity primary key not null,
-    name text                                         not null
+    name text                                         not null unique
 );
 
 create table resource
@@ -30,7 +30,6 @@ create table resource
     name        text                                         not null,
     description text,
     size        bigint                                       not null,
---     checksum    uuid                                         not null,
     type        int                                          not null,
     data        oid                                          not null,
     foreign key (type) references resourcetype (id) on delete cascade

@@ -14,7 +14,7 @@ struct CacheUnit {
  protected:
   virtual ~CacheUnit() = default;
   std::vector<T> data;
-  std::mutex mutex;
+  mutable std::mutex mutex;
 };
 
 template <typename T>
@@ -24,7 +24,7 @@ class CacheView {
   using iterator = typename data::iterator;
 
  public:
-  explicit constexpr CacheView(std::vector<T>& cache_data) : cache_data_(cache_data) {}
+  explicit constexpr CacheView(data& cache_data) : cache_data_(cache_data) {}
 
   [[nodiscard]] constexpr auto begin() const { return std::begin(cache_data_); }
   [[nodiscard]] constexpr auto end() const { return std::end(cache_data_); }
@@ -53,6 +53,7 @@ class StorageCache_T final : public CacheUnit<Types>... {
   template <typename T>
   [[nodiscard]] constexpr auto search(search_fun<T> fun) const
       -> std::optional<const std::reference_wrapper<const T>> {
+    std::lock_guard lk(CacheUnit<T>::mutex);
     if (auto result = std::find_if(std::begin(CacheUnit<T>::data),
                                    std::end(CacheUnit<T>::data), fun);
         result != std::end(CacheUnit<T>::data))
