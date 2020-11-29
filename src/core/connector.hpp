@@ -2,13 +2,12 @@
 #define GAS_SRC_UTILITY_DB_CONNECTOR_HPP_
 
 // TODO think about spdlog
+#include <fstream>
 #include <iostream>
-#include <pqxx/pqxx>
 #include <pqxx/largeobject>
+#include <pqxx/pqxx>
 #include <string>
 #include <utility>
-
-#include <fstream>
 
 #include "notification.hpp"
 #include "query.hpp"
@@ -58,29 +57,31 @@ class Connector {
     return settings_;
   }
   [[nodiscard]] auto connect() -> bool {
-    try {
-      connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
-      if (!connection_->is_open()) return false;
-    } catch (std::exception const &e) {
-      std::cerr << "Caught exception: " << e.what() << '\n';
-      return false;
+    if (!connection_) {
+      try {
+        connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
+        if (!connection_->is_open()) return false;
+      } catch (std::exception const &e) {
+        std::cerr << "Caught exception: " << e.what() << '\n';
+        return false;
+      }
     }
     return true;
   }
-  [[nodiscard]] auto connect(const Settings &settings) -> bool {
-    settings_ = settings;
-    return connect();
-  }
   auto disconnect() -> void {
-    if (connection_) connection_.reset(nullptr);
-    notification_system_.disable();
+    if (connection_) {
+      notification_system_.disable();
+      connection_.reset(nullptr);
+    }
   }
-  [[nodiscard]] auto connected() const -> bool { return connection_ && connection_->is_open(); }
+  [[nodiscard]] auto connected() const -> bool {
+    return connection_ && connection_->is_open();
+  }
   auto add_notifier(const std::string &channel,
                     const notification_callback &callback) -> void {
     notification_system_.add_notifier(channel, callback);
   }
-  auto delete_notifiers(const std::string &channel) -> void {
+  auto delete_notifiers(std::string_view channel) -> void {
     notification_system_.delete_notifier(channel);
   }
   auto get_notifiers() { return notification_system_.get_notifiers(); }

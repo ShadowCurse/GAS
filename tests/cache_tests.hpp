@@ -12,16 +12,16 @@ StorageCache_T<int, double, char>;
 
 TEST(Cache, put){
     StorageCache cache;
-    cache.put<int>({1, 2, 3});
-    cache.put<double>({1.0, 2.0, 3.0});
-    cache.put<char>({'a', 'b', 'c'});
+    cache.update<int>({1, 2, 3});
+    cache.update<double>({1.0, 2.0, 3.0});
+    cache.update<char>({'a', 'b', 'c'});
 };
 
 TEST(Cache, get_view){
   StorageCache cache;
-  cache.put<int>({1, 2, 3});
-  cache.put<double>({1.0, 2.0, 3.0});
-  cache.put<char>({'a', 'b', 'c'});
+  cache.update<int>({1, 2, 3});
+  cache.update<double>({1.0, 2.0, 3.0});
+  cache.update<char>({'a', 'b', 'c'});
 
   auto view_int = cache.get_cache_view<int>();
   ASSERT_EQ(view_int.size(), 3);
@@ -44,9 +44,9 @@ TEST(Cache, get_view){
 
 TEST(Cache, search) {
   StorageCache cache;
-  cache.put<int>({1, 2, 3});
-  cache.put<double>({1.0, 2.0, 3.0});
-  cache.put<char>({'a', 'b', 'c'});
+  cache.update<int>({1, 2, 3});
+  cache.update<double>({1.0, 2.0, 3.0});
+  cache.update<char>({'a', 'b', 'c'});
 
   auto s_1 = cache.search<int>([](const auto& i) {return i == 1;});
   ASSERT_TRUE(s_1);

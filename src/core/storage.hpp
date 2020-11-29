@@ -30,7 +30,6 @@ class StorageUnit_T {
   }
   auto disconnect() -> void {
     connector_.disconnect();
-    connector_.delete_notifiers("gas_channel");
   }
   [[nodiscard]] auto connected() const -> bool {
     return connector_.connected();
@@ -46,7 +45,7 @@ class StorageUnit_T {
   auto update() -> bool {
     if (connector_.connected()) {
       if (auto result = connector_.exec(T::select_all())) {
-        cache_.put(result->template cast<T>());
+        cache_.update<T>(result->template cast<T>());
         return true;
       }
     }
@@ -61,15 +60,27 @@ class StorageUnit_T {
 
   template <typename T>
   auto insert(const T& data) -> bool {
-    return connector_.exec(data.insert_query()).has_value();
+    if (connector_.connected()) {
+      cache_.wait_for_update_state<T>();
+      return connector_.exec(data.insert_query()).has_value();
+    }
+    return false;
   }
   template <typename T>
   auto update(const T& data) -> bool {
-    return connector_.exec(data.update_query()).has_value();
+    if (connector_.connected()) {
+      cache_.wait_for_update_state<T>();
+      return connector_.exec(data.update_query()).has_value();
+    }
+    return false;
   }
   template <typename T>
   auto remove(const T& data) -> bool {
-    return connector_.exec(data.remove_query()).has_value();
+    if (connector_.connected()) {
+      cache_.wait_for_update_state<T>();
+      return connector_.exec(data.remove_query()).has_value();
+    }
+    return false;
   }
 
   template <typename T>

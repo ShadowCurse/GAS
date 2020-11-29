@@ -44,7 +44,7 @@ class NotificationSystem {
       -> void {
     notifiers_infos_.push_back({channel, callback});
   }
-  auto delete_notifier(const std::string &channel) -> void {
+  auto delete_notifier(std::string_view channel) -> void {
     std::erase_if(notifiers_infos_, [&channel](const auto &item) {
       return item.channel == channel;
     });
@@ -53,35 +53,41 @@ class NotificationSystem {
     return notifiers_infos_;
   }
   auto enable() -> bool {
-    try {
-      connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
-      if (!connection_->is_open()) return false;
-    } catch (std::exception const &e) {
-      return false;
-    }
-
-    for (const auto &info : notifiers_infos_)
-      notifiers_.emplace_back(std::make_unique<notifier>(*connection_, info));
-
-    notifier_thread_ = std::jthread([this](const std::stop_token &stop_token) {
-      while (!stop_token.stop_requested()) {
-        try {
-          if (connection_) connection_->await_notification();
-        } catch (std::exception const &e) {
-          std::cerr << "Notifier exception: " << e.what() << '\n';
-        }
+    if (!connection_) {
+      try {
+        connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
+        if (!connection_->is_open()) return false;
+      } catch (std::exception const &e) {
+        return false;
       }
-    });
+
+      for (const auto &info : notifiers_infos_)
+        notifiers_.emplace_back(std::make_unique<notifier>(*connection_, info));
+
+      notifier_thread_ =
+          std::jthread([this](const std::stop_token &stop_token) {
+            while (!stop_token.stop_requested()) {
+              try {
+                if (connection_) connection_->await_notification();
+              } catch (std::exception const &e) {
+                std::cerr << "Notifier exception: " << e.what() << '\n';
+              }
+            }
+          });
+    }
     return true;
   }
   auto disable() -> bool {
-    notifier_thread_.request_stop();
-    if (connection_) connection_->close();
-    notifiers_.clear();
-    if (notifier_thread_.joinable()) notifier_thread_.join();
+    if (connection_) {
+      notifier_thread_.request_stop();
+      connection_->close();
+      notifiers_.clear();
+      if (notifier_thread_.joinable()) notifier_thread_.join();
+      connection_.reset(nullptr);
+    }
     return true;
   }
-  auto is_enabled() -> bool { return !notifiers_.empty(); }
+  auto is_enabled() -> bool { return connection_.get(); }
 
  private:
   Settings settings_;

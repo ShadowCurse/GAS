@@ -84,7 +84,7 @@ struct ResourceType {
   }
   [[nodiscard]] auto update_query() const {
     return no_return_query(
-        fmt::format("update resourcetype set name = '{}' where id = '{}';", id));
+        fmt::format("update resourcetype set name = '{}' where id = '{}';",name, id));
   }
   [[nodiscard]] auto remove_query() const {
     return no_return_query(

@@ -1,6 +1,8 @@
 #ifndef GAS_SRC_UTILITY_CACHE_HPP_
 #define GAS_SRC_UTILITY_CACHE_HPP_
 
+#include <condition_variable>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <vector>
@@ -11,10 +13,22 @@ template <typename T>
 struct CacheUnit {
  public:
   using search_fun = std::function<bool(const T&)>;
+
+ public:
+  enum class State {
+    ok,
+    wait_for_update,
+  };
+
  protected:
   virtual ~CacheUnit() = default;
+
   std::vector<T> data;
+
+  State state{State::ok};
+
   mutable std::mutex mutex;
+  mutable std::condition_variable cv;
 };
 
 template <typename T>
@@ -46,13 +60,26 @@ class StorageCache_T final : public CacheUnit<Types>... {
   ~StorageCache_T() final = default;
 
   template <typename T>
-  constexpr auto put(std::vector<T> data) -> void {
+  constexpr auto wait_for_update_state() -> void {
+    CacheUnit<T>::state = CacheUnit<T>::State::wait_for_update;
+  }
+
+  template <typename T>
+  constexpr auto update(std::vector<T> data) -> void {
     std::lock_guard lk(CacheUnit<T>::mutex);
     CacheUnit<T>::data = std::move(data);
+    if (CacheUnit<T>::state == CacheUnit<T>::State::wait_for_update) {
+      CacheUnit<T>::state = CacheUnit<T>::State::ok;
+      CacheUnit<T>::cv.notify_one();
+    }
   }
   template <typename T>
   [[nodiscard]] constexpr auto search(search_fun<T> fun) const
-      -> std::optional<const std::reference_wrapper<const T>> {
+      -> std::optional<T> {
+    if (CacheUnit<T>::state == CacheUnit<T>::State::wait_for_update) {
+      std::unique_lock ul(CacheUnit<T>::mutex);
+      CacheUnit<T>::cv.wait_for(ul, std::chrono::milliseconds(100));
+    }
     std::lock_guard lk(CacheUnit<T>::mutex);
     if (auto result = std::find_if(std::begin(CacheUnit<T>::data),
                                    std::end(CacheUnit<T>::data), fun);
