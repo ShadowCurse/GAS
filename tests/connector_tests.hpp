@@ -297,7 +297,7 @@ TEST(Connector, test_notifications) {
   }
   EXPECT_EQ(connector.disable_notifications(), true);
   EXPECT_EQ(connector.notifications_enabled(), false);
-  EXPECT_EQ(count, 6);
+  EXPECT_GT(count, 6);
 }
 
 #endif  // GAS_TESTS_CONNECTOR_TESTS_HPP_
