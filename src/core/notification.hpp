@@ -67,11 +67,7 @@ class NotificationSystem {
       notifier_thread_ =
           std::jthread([this](const std::stop_token &stop_token) {
             while (!stop_token.stop_requested()) {
-              try {
-                if (connection_) connection_->await_notification();
-              } catch (std::exception const &e) {
-                std::cerr << "Notifier exception: " << e.what() << '\n';
-              }
+              if (connection_) connection_->await_notification(0, 100000);
             }
           });
     }
@@ -80,9 +76,8 @@ class NotificationSystem {
   auto disable() -> bool {
     if (connection_) {
       notifier_thread_.request_stop();
-      connection_->close();
-      notifiers_.clear();
       if (notifier_thread_.joinable()) notifier_thread_.join();
+      connection_->close();
       connection_.reset(nullptr);
     }
     return true;
