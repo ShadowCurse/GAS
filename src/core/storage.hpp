@@ -28,9 +28,7 @@ class StorageUnit_T {
     connector_.enable_notifications();
     return connector_.connect() && connector_.notifications_enabled();
   }
-  auto disconnect() -> void {
-    connector_.disconnect();
-  }
+  auto disconnect() -> void { connector_.disconnect(); }
   [[nodiscard]] auto connected() const -> bool {
     return connector_.connected();
   }
@@ -88,24 +86,26 @@ class StorageUnit_T {
     return cache_.search<T>(fun);
   }
 
-  auto create_resource(Resource& resource, std::string_view file_path) {
+  auto create_resource(Resource& resource, std::string_view file_path) -> bool {
+    if (not std::filesystem::exists(file_path)) return false;
     auto size = std::filesystem::file_size(file_path);
     auto lo_oid = connector_.upload_large_object(file_path);
     resource.data = lo_oid;
     resource.size = size;
-    insert(resource);
+    return insert(resource);
   }
-  auto remove_resource(const Resource& resource) {
+  auto remove_resource(const Resource& resource) -> bool {
     connector_.remove_lo(resource.data);
-    remove(resource);
+    return remove(resource);
   }
-  auto upload_resource(Resource& resource, std::string_view file_path) {
-    remove_resource(resource);
+  auto update_resource(Resource& resource, std::string_view file_path) -> bool {
+    if (not std::filesystem::exists(file_path)) return false;
+    connector_.remove_lo(resource.data);
     auto size = std::filesystem::file_size(file_path);
     auto lo_oid = connector_.upload_large_object(file_path);
     resource.data = lo_oid;
     resource.size = size;
-    update(resource);
+    return update(resource);
   }
   auto download_resource(const Resource& resource, std::string_view file_path) {
     connector_.download_large_object(resource.data, file_path);
@@ -168,10 +168,10 @@ class View {
       return Iterator{views, views->end(), {}};
     }
 
-    auto operator==(Iterator& other) const -> bool {
-      return current_view_iterator_ == other.current_view_iterator_;
+    friend auto operator==(Iterator& first, Iterator& second) -> bool {
+      return first.current_view_iterator_ == second.current_view_iterator_;
     }
-    auto operator!=(Iterator& other) -> bool { return !(*this == other); }
+    friend auto operator!=(Iterator& first, Iterator& second) -> bool { return !(first == second); }
 
     auto operator++() -> Iterator& {
       if (current_view_iterator_ != std::end(*views_)) {
@@ -204,8 +204,8 @@ class View {
   };
 
  public:
-  explicit View(const std::vector<std::shared_ptr<StorageUnit>>& storages) {
-    for (const auto& storage : storages) {
+  explicit View(const std::map<StorageUnit::storage_id, std::shared_ptr<StorageUnit>>& storages) {
+    for (const auto& [id, storage] : storages) {
       views_.emplace_back(storage->create_view<T>());
     }
   }
@@ -231,51 +231,39 @@ class Storage {
 
   [[nodiscard]] auto add_storage(Settings settings) -> StorageUnit::storage_id {
     ++id_counter;
-    storages_.emplace_back(
-        std::make_shared<StorageUnit>(id_counter, std::move(settings)));
+    storages_.insert({id_counter, std::make_shared<StorageUnit>(
+                                      id_counter, std::move(settings))});
     return id_counter;
   }
   auto remove_storage(StorageUnit::storage_id id) -> void {
-    std::erase_if(storages_,
-                  [&id](const auto& storage) { return storage->id(); });
+    storages_.erase(id);
   }
   [[nodiscard]] auto connect_storage(StorageUnit::storage_id id) -> bool {
-    if (auto result = std::find_if(
-            std::begin(storages_), std::end(storages_),
-            [&id](const auto& storage) { return storage->id() == id; });
-        result != std::end(storages_))
-      return (*result)->connect();
+    if (storages_.contains(id)) return storages_[id]->connect();
     return false;
   }
   auto disconnect_storage(StorageUnit::storage_id id) -> void {
-    if (auto result = std::find_if(
-            std::begin(storages_), std::end(storages_),
-            [&id](const auto& storage) { return storage->id() == id; });
-        result != std::end(storages_))
-      (*result)->disconnect();
+    if (storages_.contains(id)) storages_[id]->disconnect();
   }
   auto get_storage(StorageUnit::storage_id id)
       -> std::optional<std::shared_ptr<StorageUnit>> {
-    if (auto result = std::find_if(
-            std::begin(storages_), std::end(storages_),
-            [&id](const auto& storage) { return storage->id() == id; });
-        result != std::end(storages_))
-      return (*result);
+    if (storages_.contains(id))
+      return storages_[id];
     return std::nullopt;
   }
   template <typename T>
-  [[nodiscard]] constexpr auto create_view() const {
-    for (const auto& storage : storages_) storage->update<T>();
+  [[nodiscard]] auto create_view() const {
+    for (const auto& [id, storage] : storages_) storage->update<T>();
     return View<T>{storages_};
   };
 
   auto update() -> void {
-    for (const auto& storage : storages_) storage->update_all();
+    for (const auto& [id, storage] : storages_) storage->update_all();
   }
 
  private:
   StorageUnit::storage_id id_counter{0};
-  std::vector<std::shared_ptr<StorageUnit>> storages_;
+  std::map<StorageUnit::storage_id, std::shared_ptr<StorageUnit>> storages_;
 };
 
 }  // namespace gas

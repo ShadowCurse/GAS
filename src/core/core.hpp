@@ -70,7 +70,7 @@ class Core {
   auto update_resource(StorageUnit::storage_id storage_id, Resource& resource,
                        std::string_view file_path) {
     if (auto storage_unit = storage_.get_storage(storage_id)) {
-      (*storage_unit)->upload_resource(resource, file_path);
+      (*storage_unit)->update_resource(resource, file_path);
     }
   }
   auto download_resource(StorageUnit::storage_id storage_id,
