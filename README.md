@@ -7,9 +7,15 @@ It allows to store and manage different assets used in game development process 
 
 Currently db of choice is Postgresql.
 
+## Disclamer
+
+This is not finished by any means project. It is full of bugs and requires a lot of work to be completed.
+
 ## Instructions for build:
 To build this project you need dependencies and can be obtained with
 [conan](https://docs.conan.io/en/latest/installation.html)
+
+Also gui part is using Qt 5.14
 
 Steps:
 ~~~~

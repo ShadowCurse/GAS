@@ -111,30 +111,46 @@ class Connector {
   }
 
   auto create_lo() -> oid {
-    pqxx::work work(*connection_);
-    pqxx::largeobject lo(work);
-    work.commit();
-    return lo.id();
+    try {
+      pqxx::work work(*connection_);
+      pqxx::largeobject lo(work);
+      work.commit();
+      return lo.id();
+    } catch (std::exception const &e) {
+      std::cerr << "create_lo caught exception: " << e.what() << '\n';
+    }
   }
 
   auto remove_lo(oid oid) -> void {
-    pqxx::work work(*connection_);
-    pqxx::largeobject lo(oid);
-    lo.remove(work);
-    work.commit();
+    try {
+      pqxx::work work(*connection_);
+      pqxx::largeobject lo(oid);
+      lo.remove(work);
+      work.commit();
+    } catch (std::exception const &e) {
+      std::cerr << "remove_lo caught exception: " << e.what() << '\n';
+    }
   }
 
   auto upload_large_object(std::string_view file_path) -> oid {
-    pqxx::work work(*connection_);
-    pqxx::largeobjectaccess lo_new(work, file_path);
-    work.commit();
-    return lo_new.id();
+    try {
+      pqxx::work work(*connection_);
+      pqxx::largeobjectaccess lo_new(work, file_path);
+      work.commit();
+      return lo_new.id();
+    } catch (std::exception const &e) {
+      std::cerr << "upload_lo caught exception: " << e.what() << '\n';
+    }
   }
 
   auto download_large_object(uint oid, std::string_view file_path) -> void {
-    pqxx::work work(*connection_);
-    pqxx::largeobjectaccess object(work, oid);
-    object.to_file(file_path);
+    try {
+      pqxx::work work(*connection_);
+      pqxx::largeobjectaccess object(work, oid);
+      object.to_file(file_path);
+    } catch (std::exception const &e) {
+      std::cerr << "download_lo caught exception: " << e.what() << '\n';
+    }
   }
 
  private:

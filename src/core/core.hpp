@@ -21,11 +21,20 @@ class Core {
   auto disconnect_storage(StorageUnit::storage_id id) {
     return storage_.disconnect_storage(id);
   }
+  auto get_storage_settings(StorageUnit::storage_id id) -> std::optional<Settings> {
+    if (auto storage_unit = storage_.get_storage(id))
+      return (*storage_unit)->get_settings();
+    return std::nullopt;
+  }
   template <typename T>
   auto create_view() {
     return storage_.create_view<T>();
   }
-  auto update_storage() -> void { storage_.update(); }
+  template <typename T>
+  auto create_view(StorageUnit::storage_id id) {
+    return storage_.create_view<T>(id);
+  }
+  auto update() -> void { storage_.update(); }
 
   template <typename T>
   auto insert(StorageUnit::storage_id storage_id, const T& data) {
@@ -48,11 +57,36 @@ class Core {
 
   template <typename T>
   auto search(StorageUnit::storage_id storage_id,
-              StorageCache::search_fun<T> fun) {
+              StorageCache::search_fun<T> fun) -> std::optional<T> {
     if (auto storage_unit = storage_.get_storage(storage_id)) {
       return (*storage_unit)->search<T>(fun);
     }
     return std::nullopt;
+  }
+  template <typename T>
+  auto search_all(StorageUnit::storage_id storage_id,
+              StorageCache::search_fun<T> fun) -> std::vector<T> {
+    if (auto storage_unit = storage_.get_storage(storage_id)) {
+      return (*storage_unit)->search_all<T>(fun);
+    }
+    return {};
+  }
+
+  auto insert_user(StorageUnit::storage_id storage_id, std::string_view username, std::string_view password,
+                   std::string_view email, std::string_view description) -> bool {
+    if (auto storage_unit = storage_.get_storage(storage_id)) {
+      return (*storage_unit)
+          ->insert_user(username, password, email, description);
+    }
+    return false;
+  }
+
+  auto search_user(StorageUnit::storage_id storage_id,
+                   std::string_view username, std::string_view password) {
+    if (auto storage_unit = storage_.get_storage(storage_id)) {
+      return (*storage_unit)->search_user(username, password);
+    }
+    return false;
   }
 
   auto create_resource(StorageUnit::storage_id storage_id, Resource& resource,

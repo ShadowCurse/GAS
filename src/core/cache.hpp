@@ -20,13 +20,10 @@ struct CacheUnit {
     wait_for_update,
   };
 
- protected:
+// protected:
   virtual ~CacheUnit() = default;
-
   std::vector<T> data;
-
   State state{State::ok};
-
   mutable std::mutex mutex;
   mutable std::condition_variable cv;
 };
@@ -46,6 +43,7 @@ class CacheView {
   [[nodiscard]] constexpr auto empty() const { return cache_data_.empty(); }
 
  private:
+  // TODO may be store CacheUnit
   data& cache_data_;
 };
 
@@ -86,6 +84,20 @@ class StorageCache_T final : public CacheUnit<Types>... {
         result != std::end(CacheUnit<T>::data))
       return *result;
     return std::nullopt;
+  }
+  template <typename T>
+  [[nodiscard]] constexpr auto search_all(search_fun<T> fun) const
+  -> std::vector<T> {
+    if (CacheUnit<T>::state == CacheUnit<T>::State::wait_for_update) {
+      std::unique_lock ul(CacheUnit<T>::mutex);
+      CacheUnit<T>::cv.wait_for(ul, std::chrono::milliseconds(100));
+    }
+    std::lock_guard lk(CacheUnit<T>::mutex);
+    std::vector<T> ret;
+    for (const auto& item : CacheUnit<T>::data)
+      if (fun(item))
+        ret.push_back(item);
+    return ret;
   }
   template <typename T>
   [[nodiscard]] constexpr auto get_cache_view() -> CacheView<T> {

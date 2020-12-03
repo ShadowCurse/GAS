@@ -17,6 +17,10 @@ class GasGui final : public QMainWindow {
 
  public:
   using id_type = uint32_t;
+  struct item_id {
+    id_type item_id{};
+    id_type storage_id{};
+  };
 
   struct login_info {
     std::string username;
@@ -33,32 +37,28 @@ class GasGui final : public QMainWindow {
   struct resource_info_type {
     struct resource_commit {
       std::string date;
-      std::string description;
+      std::string message;
     };
 
     std::string name;
     std::string description;
-    uint32_t size;
+    uint32_t size{};
     std::string type;
     std::vector<resource_commit> commits;
     std::vector<std::string> dependencies;
   };
-  struct resource_tree_node_type {
-    std::string name;
-    std::vector<std::pair<id_type, std::string>> children;
-  };
-  using resource_tree_type = std::vector<resource_tree_node_type>;
+  using resource_tree_type = std::map<std::string,  std::vector<std::pair<item_id, std::string>>>;
 
   // commit
   struct commit_info_type {
-    id_type id{};
+//    item_id id{};
     std::string username;
     std::string resource_name;
     std::string date;
     std::string message;
   };
   struct commit_list_node {
-    id_type id{};
+    item_id id{};
     std::string date;
     std::string message;
   };
@@ -71,7 +71,7 @@ class GasGui final : public QMainWindow {
     std::string description;
   };
   struct user_list_node {
-    id_type id{};
+    item_id id{};
     std::string name;
   };
   using users_list_type = std::vector<user_list_node>;
@@ -85,6 +85,7 @@ class GasGui final : public QMainWindow {
 
   // resource action types
   struct resource_create_type {
+    id_type connector_id{};
     std::string name;
     std::string description;
     std::string file_path;
@@ -92,15 +93,19 @@ class GasGui final : public QMainWindow {
   };
 
   struct resource_update_type {
-    id_type id{};
+    item_id id{};
     std::string name;
     std::string description;
     std::string file_path;
     std::string type;
   };
 
-  using resource_download_type = std::string;
-  using resource_delete_type = id_type;
+  struct resource_download_type {
+    item_id id{};
+    std::string file_path;
+  };
+
+  using resource_delete_type = item_id;
 
   struct connector_info {
     id_type id{};
@@ -190,9 +195,9 @@ class GasGui final : public QMainWindow {
   void signal_create_users_list();
   void signal_create_logs_list();
 
-  void signal_get_resource_info(id_type id);
-  void signal_get_commit_info(id_type id);
-  void signal_get_user_info(id_type id);
+  void signal_get_resource_info(item_id id);
+  void signal_get_commit_info(item_id id);
+  void signal_get_user_info(item_id id);
 
   void signal_add_new_resource(resource_create_type);
   void signal_update_resource(resource_update_type);
@@ -206,9 +211,9 @@ class GasGui final : public QMainWindow {
  private:
   Ui::MainWindow *ui;
 
-  std::map<QTreeWidgetItem *, id_type> resource_tree_ids;
-  std::map<QTreeWidgetItem *, id_type> commits_ids;
-  std::map<QTreeWidgetItem *, id_type> users_ids;
+  std::map<QTreeWidgetItem *, item_id> resource_tree_ids;
+  std::map<QTreeWidgetItem *, item_id> commits_ids;
+  std::map<QTreeWidgetItem *, item_id> users_ids;
   std::map<QPushButton *, id_type> connections_bar_ids;
   std::map<QPushButton *, id_type> connections_settings_ids;
 };

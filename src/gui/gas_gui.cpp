@@ -85,7 +85,10 @@ void GasGui::slot_starting_connection_state_change(bool status) {
   if (!status) log_error("Could not connect to database");
 }
 
-void GasGui::slot_accept_user() { ui->main_window_tabs->setCurrentIndex(0); }
+void GasGui::slot_accept_user() {
+  ui->main_window_tabs->setCurrentIndex(0);
+  ui->tabWidget->setCurrentIndex(0);
+}
 void GasGui::slot_deny_user() {}
 
 void GasGui::slot_draw_resource_tree(
@@ -142,7 +145,7 @@ void GasGui::slot_draw_resource_info(GasGui::resource_info_type info) {
   for (const auto& commit : info.commits) {
     new QTreeWidgetItem(ui->resource_commits,
                         {QString::fromStdString(commit.date),
-                         QString::fromStdString(commit.description)});
+                         QString::fromStdString(commit.message)});
   }
   ui->resource_dependency->clear();
   for (const auto& dependency : info.dependencies) {
@@ -168,7 +171,6 @@ void GasGui::slot_draw_users_info(GasGui::user_info_type info) {
 
 void GasGui::slot_show_connector_settings(connector_info info) {
   ui->connection_tabs->setCurrentIndex(1);
-  ui->info_connection_name_value->setText(QString::fromStdString(info.name));
   ui->info_connection_host_value->setText(QString::fromStdString(info.host));
   ui->info_connection_port_value->setValue(info.port);
   ui->info_connection_db_name_value->setText(
@@ -269,7 +271,7 @@ void GasGui::slot_starting_create_user() {
 }
 
 void GasGui::slot_connector_state_change() {
-  auto caller = static_cast<QPushButton*>(sender());
+  auto caller = dynamic_cast<QPushButton*>(sender());
   auto id = connections_settings_ids[caller];
   emit signal_connector_state_change(id, caller->isChecked());
 }
@@ -322,8 +324,10 @@ void GasGui::slot_update_resource() {
 }
 
 void GasGui::slot_download_resource() {
-  emit signal_download_resource(
-      ui->download_resource_path_value->text().toStdString());
+  if (auto curr_resource = ui->resource_tree->currentItem())
+    emit signal_download_resource(
+        {resource_tree_ids[curr_resource],
+         ui->download_resource_path_value->text().toStdString()});
 }
 
 void GasGui::slot_remove_resource() {
@@ -360,7 +364,7 @@ void GasGui::slot_prepare_for_new_connector_settings() {
 }
 
 void GasGui::slot_request_connector_settings() {
-  auto caller = static_cast<QPushButton*>(sender());
+  auto caller = dynamic_cast<QPushButton*>(sender());
   if (!caller->isChecked()) {
     caller->setChecked(true);
     return;
@@ -383,6 +387,6 @@ void GasGui::slot_request_connector_creation() {
 }
 
 void GasGui::slot_request_connector_remove() {
-  auto caller = static_cast<QPushButton*>(sender());
+  auto caller = dynamic_cast<QPushButton*>(sender());
   emit signal_request_connector_remove(connections_settings_ids[caller]);
 }

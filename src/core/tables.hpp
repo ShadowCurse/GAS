@@ -52,6 +52,13 @@ struct User {
         "('{}', crypt('{}', gen_salt('md5')), '{}', '{}');",
         username, password, email, description));
   }
+  [[nodiscard]] static auto search(std::string_view username,
+                                   std::string_view password) {
+    return user_query(
+        fmt::format("select (password = crypt('{}', password)) AS pwd_match "
+                    "from users where username = '{}'",
+                    password, username));
+  }
   [[nodiscard]] static auto remove_by_id(int id) {
     return no_return_query(
         fmt::format("delete from users where id = '{}';", id));
@@ -83,8 +90,8 @@ struct ResourceType {
         fmt::format("insert into resourcetype(name) values ('{}');", name));
   }
   [[nodiscard]] auto update_query() const {
-    return no_return_query(
-        fmt::format("update resourcetype set name = '{}' where id = '{}';",name, id));
+    return no_return_query(fmt::format(
+        "update resourcetype set name = '{}' where id = '{}';", name, id));
   }
   [[nodiscard]] auto remove_query() const {
     return no_return_query(
@@ -99,6 +106,7 @@ struct Resource {
   using resource_query =
       Query<int, std::string, std::string, uint64_t, int, uint>;
 
+  explicit Resource() = default;
   explicit Resource(const std::tuple<int, std::string, std::string, uint64_t,
                                      int, uint> &args) {
     std::tie(id, name, description, size, type, data) = args;

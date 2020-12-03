@@ -32,6 +32,7 @@ class StorageUnit_T {
   [[nodiscard]] auto connected() const -> bool {
     return connector_.connected();
   }
+  auto get_settings() const { return connector_.get_settings(); }
 
   template <typename T>
   [[nodiscard]] auto create_view() {
@@ -82,8 +83,27 @@ class StorageUnit_T {
   }
 
   template <typename T>
-  auto search(StorageCache::search_fun<T> fun) {
+  auto search(StorageCache::search_fun<T> fun) -> std::optional<T> {
     return cache_.search<T>(fun);
+  }
+
+  template <typename T>
+  auto search_all(StorageCache::search_fun<T> fun) -> std::vector<T> {
+    return cache_.search_all<T>(fun);
+  }
+
+  auto insert_user(std::string_view username, std::string_view password,
+                  std::string_view email, std::string_view description)
+      -> bool {
+    if (connector_.exec(User::insert(username, password, email, description)))
+      return true;
+    return false;
+  }
+
+  auto search_user(std::string_view username, std::string_view password)
+      -> bool {
+    if (connector_.exec(User::search(username, password))) return true;
+    return false;
   }
 
   auto create_resource(Resource& resource, std::string_view file_path) -> bool {
@@ -141,7 +161,7 @@ class View {
     using type = T;
     using data_type = CacheView<type>;
     using data_iterator = typename data_type::iterator;
-    using view = std::vector<data_type>;
+    using view = std::map<StorageUnit::storage_id, data_type>;
     using view_iterator = typename view::iterator;
     friend class View<T>;
 
@@ -154,12 +174,12 @@ class View {
 
     static auto create_begin(view* views) {
       auto views_iter = views->begin();
-      while (views_iter != views->end() && (*views_iter).empty()) {
+      while (views_iter != views->end() && (*views_iter).second.empty()) {
         ++views_iter;
       }
       data_iterator di;
       if (views_iter != views->end()) {
-        di = std::begin(*views_iter);
+        di = std::begin((*views_iter).second);
       }
       return Iterator{views, views_iter, di};
     }
@@ -171,18 +191,22 @@ class View {
     friend auto operator==(Iterator& first, Iterator& second) -> bool {
       return first.current_view_iterator_ == second.current_view_iterator_;
     }
-    friend auto operator!=(Iterator& first, Iterator& second) -> bool { return !(first == second); }
+    friend auto operator!=(Iterator& first, Iterator& second) -> bool {
+      return !(first == second);
+    }
 
     auto operator++() -> Iterator& {
       if (current_view_iterator_ != std::end(*views_)) {
-        if (current_data_iterator_ != std::end(*current_view_iterator_)) {
+        if (current_data_iterator_ !=
+            std::end((*current_view_iterator_).second)) {
           ++current_data_iterator_;
         } else {
           while (++current_view_iterator_ != std::end(*views_) &&
-                 current_view_iterator_->empty()) {
+                 (*current_view_iterator_).second.empty()) {
           }
           if (current_view_iterator_ != std::end(*views_)) {
-            current_data_iterator_ = std::begin(*current_view_iterator_);
+            current_data_iterator_ =
+                std::begin((*current_view_iterator_).second);
           }
         }
       }
@@ -195,7 +219,9 @@ class View {
       return tmp;
     }
 
-    auto operator*() const -> T& { return *current_data_iterator_; }
+    auto operator*() const -> std::pair<StorageUnit::storage_id, T&> {
+      return {(*current_view_iterator_).first, *current_data_iterator_};
+    }
 
    private:
     data_iterator current_data_iterator_{};
@@ -204,9 +230,10 @@ class View {
   };
 
  public:
-  explicit View(const std::map<StorageUnit::storage_id, std::shared_ptr<StorageUnit>>& storages) {
+  explicit View(const std::map<StorageUnit::storage_id,
+                               std::shared_ptr<StorageUnit>>& storages) {
     for (const auto& [id, storage] : storages) {
-      views_.emplace_back(storage->create_view<T>());
+      views_.insert({id, storage->create_view<T>()});
     }
   }
 
@@ -222,7 +249,7 @@ class View {
   }
 
  private:
-  std::vector<CacheView<T>> views_;
+  std::map<StorageUnit::storage_id, CacheView<T>> views_;
 };
 
 class Storage {
@@ -239,7 +266,10 @@ class Storage {
     storages_.erase(id);
   }
   [[nodiscard]] auto connect_storage(StorageUnit::storage_id id) -> bool {
-    if (storages_.contains(id)) return storages_[id]->connect();
+    if (storages_.contains(id) && storages_[id]->connect()) {
+      storages_[id]->update_all();
+      return true;
+    }
     return false;
   }
   auto disconnect_storage(StorageUnit::storage_id id) -> void {
@@ -247,14 +277,17 @@ class Storage {
   }
   auto get_storage(StorageUnit::storage_id id)
       -> std::optional<std::shared_ptr<StorageUnit>> {
-    if (storages_.contains(id))
-      return storages_[id];
+    if (storages_.contains(id)) return storages_[id];
     return std::nullopt;
   }
   template <typename T>
   [[nodiscard]] auto create_view() const {
     for (const auto& [id, storage] : storages_) storage->update<T>();
     return View<T>{storages_};
+  };
+  template <typename T>
+  [[nodiscard]] auto create_view(StorageUnit::storage_id id) {
+    if (storages_.contains(id)) return storages_[id]->create_view<T>();
   };
 
   auto update() -> void {

@@ -3017,7 +3017,7 @@ QSpinBox {
                            <string notr="true"/>
                           </property>
                           <property name="currentIndex">
-                           <number>0</number>
+                           <number>1</number>
                           </property>
                           <widget class="QWidget" name="connection_update_tab">
                            <property name="sizePolicy">
@@ -3414,56 +3414,6 @@ QPushButton::hover {
                             <property name="bottomMargin">
                              <number>0</number>
                             </property>
-                            <item>
-                             <widget class="QGroupBox" name="info_connection_name_box">
-                              <property name="title">
-                               <string/>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignCenter</set>
-                              </property>
-                              <property name="flat">
-                               <bool>true</bool>
-                              </property>
-                              <layout class="QHBoxLayout" name="horizontalLayout_47">
-                               <item>
-                                <widget class="QLabel" name="info_connection_name_label">
-                                 <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                   <horstretch>0</horstretch>
-                                   <verstretch>0</verstretch>
-                                  </sizepolicy>
-                                 </property>
-                                 <property name="maximumSize">
-                                  <size>
-                                   <width>172</width>
-                                   <height>82</height>
-                                  </size>
-                                 </property>
-                                 <property name="text">
-                                  <string>Connection name</string>
-                                 </property>
-                                </widget>
-                               </item>
-                               <item>
-                                <widget class="QLineEdit" name="info_connection_name_value">
-                                 <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                   <horstretch>0</horstretch>
-                                   <verstretch>0</verstretch>
-                                  </sizepolicy>
-                                 </property>
-                                 <property name="maximumSize">
-                                  <size>
-                                   <width>172</width>
-                                   <height>82</height>
-                                  </size>
-                                 </property>
-                                </widget>
-                               </item>
-                              </layout>
-                             </widget>
-                            </item>
                             <item>
                              <widget class="QGroupBox" name="info_connection_host_box">
                               <property name="title">
@@ -4181,6 +4131,9 @@ QPushButton:checked {
                   <height>82</height>
                  </size>
                 </property>
+                <property name="echoMode">
+                 <enum>QLineEdit::Password</enum>
+                </property>
                </widget>
               </item>
              </layout>
@@ -4326,7 +4279,11 @@ QLineEdit {
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="login_password_value"/>
+                   <widget class="QLineEdit" name="login_password_value">
+                    <property name="echoMode">
+                     <enum>QLineEdit::Password</enum>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>

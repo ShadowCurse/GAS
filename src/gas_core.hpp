@@ -11,6 +11,7 @@ class GasCore final : public QObject {
 
  public:
   using id_type = GasGui::id_type;
+  using item_id = GasGui::item_id;
   using connector_info = GasGui::connector_info;
   using login_info = GasGui::login_info;
   using create_user_info = GasGui::create_user_info;
@@ -33,7 +34,7 @@ class GasCore final : public QObject {
   GasCore();
   ~GasCore() final = default;
 
-  auto show_gui() -> void { gui.show(); }
+  auto show_gui() -> void { gui_.show(); }
 
  public slots:
 
@@ -48,9 +49,9 @@ class GasCore final : public QObject {
   void slot_create_users_list();
   void slot_create_logs_list();
 
-  void slot_send_resource_info(id_type);
-  void slot_send_commit_info(id_type);
-  void slot_send_user_info(id_type);
+  void slot_send_resource_info(item_id);
+  void slot_send_commit_info(item_id);
+  void slot_send_user_info(item_id);
 
   void slot_add_new_resource(resource_create_type);
   void slot_update_resource(resource_update_type);
@@ -85,8 +86,9 @@ class GasCore final : public QObject {
   void signal_log_error(std::string);
 
  private:
-  GasGui gui;
-  gas::Core core;
+  GasGui gui_;
+  gas::Core core_;
+  GasGui::id_type main_storage_{};
 };
 
 #endif  // RESOURCE_TREE_H

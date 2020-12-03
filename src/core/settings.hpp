@@ -12,38 +12,16 @@ class Settings {
   Settings() = default;
   auto operator==(const Settings& other) const -> bool = default;
 
-  [[nodiscard]] auto host(std::string host) -> Settings& {
-    host_ = std::move(host);
-    return *this;
-  }
-  [[nodiscard]] auto port(size_t port) -> Settings& {
-    port_ = port;
-    return *this;
-  }
-  [[nodiscard]] auto db_name(std::string db_name) -> Settings& {
-    db_name_ = std::move(db_name);
-    return *this;
-  }
-  [[nodiscard]] auto username(std::string username) -> Settings& {
-    username_ = std::move(username);
-    return *this;
-  }
-  [[nodiscard]] auto password(std::string password) -> Settings& {
-    password_ = std::move(password);
-    return *this;
-  }
-
   [[nodiscard]] auto to_string() const -> std::string {
-    return fmt::format("host={} port={} dbname={} user={} password={}", host_,
-                       std::to_string(port_), db_name_, username_, password_);
+    return fmt::format("host={} port={} dbname={} user={} password={}", host,
+                       std::to_string(port), db_name, username, password);
   }
 
- private:
-  std::string host_;
-  size_t port_{};
-  std::string db_name_;
-  std::string username_;
-  std::string password_;
+  std::string host;
+  size_t port{};
+  std::string db_name;
+  std::string username;
+  std::string password;
 };
 
 }  // namespace gas
