@@ -8,24 +8,26 @@
 using namespace gas;
 
 TEST(StorageUnit, connect) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
 }
 
 TEST(StorageUnit, disconnect) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -34,12 +36,13 @@ TEST(StorageUnit, disconnect) {
 }
 
 TEST(StorageUnit, update) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -54,12 +57,12 @@ TEST(StorageUnit, update) {
 }
 
 TEST(StorageUnit, update_all) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -69,12 +72,13 @@ TEST(StorageUnit, update_all) {
 }
 
 TEST(StorageUnit, view) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -90,12 +94,13 @@ TEST(StorageUnit, view) {
 }
 
 TEST(StorageUnit, search) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -111,12 +116,13 @@ TEST(StorageUnit, search) {
 }
 
 TEST(StorageUnit, insert_item) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -132,12 +138,13 @@ TEST(StorageUnit, insert_item) {
 }
 
 TEST(StorageUnit, update_item) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -159,12 +166,13 @@ TEST(StorageUnit, update_item) {
 }
 
 TEST(StorageUnit, remove_item) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -180,12 +188,13 @@ TEST(StorageUnit, remove_item) {
 }
 
 TEST(StorageUnit, create_resource) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -203,12 +212,13 @@ TEST(StorageUnit, create_resource) {
 }
 
 TEST(StorageUnit, create_resource_fail) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -220,12 +230,13 @@ TEST(StorageUnit, create_resource_fail) {
 }
 
 TEST(StorageUnit, update_resource) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -239,12 +250,13 @@ TEST(StorageUnit, update_resource) {
 }
 
 TEST(StorageUnit, update_resource_fail) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -258,12 +270,13 @@ TEST(StorageUnit, update_resource_fail) {
 }
 
 TEST(StorageUnit, download_resource) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -278,12 +291,13 @@ TEST(StorageUnit, download_resource) {
 }
 
 TEST(StorageUnit, remove_resource) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
+
   StorageUnit su(0, settings);
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
@@ -301,12 +315,12 @@ TEST(StorageUnit, remove_resource) {
 }
 
 TEST(Storage, add_storage) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Storage st;
   auto sid = st.add_storage(settings);
@@ -316,12 +330,12 @@ TEST(Storage, add_storage) {
 }
 
 TEST(Storage, connect_storage) {
-  auto settings = Settings{}
-      .host("localhost")
-      .port(5432)
-      .db_name("gas")
-      .username("gas_admin")
-      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Storage st;
   auto sid = st.add_storage(settings);
@@ -333,12 +347,12 @@ TEST(Storage, connect_storage) {
 }
 
 TEST(Storage, disconnect_storage) {
-  auto settings = Settings{}
-      .host("localhost")
-      .port(5432)
-      .db_name("gas")
-      .username("gas_admin")
-      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Storage st;
   auto sid = st.add_storage(settings);
@@ -352,12 +366,12 @@ TEST(Storage, disconnect_storage) {
 }
 
 TEST(Storage, remove_storage) {
-  auto settings = Settings{}
-      .host("localhost")
-      .port(5432)
-      .db_name("gas")
-      .username("gas_admin")
-      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Storage st;
   auto sid = st.add_storage(settings);
@@ -370,12 +384,12 @@ TEST(Storage, remove_storage) {
 }
 
 TEST(Storage, create_view) {
-  auto settings = Settings{}
-      .host("localhost")
-      .port(5432)
-      .db_name("gas")
-      .username("gas_admin")
-      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Storage st;
   auto sid = st.add_storage(settings);
@@ -387,8 +401,7 @@ TEST(Storage, create_view) {
   auto view = st.create_view<Resource>();
   EXPECT_GT(view.size(), 0);
   int size{0};
-  for (const auto& item: view)
-    ++size;
+  for (const auto& item : view) ++size;
   EXPECT_GT(size, 0);
   st.remove_storage(sid);
 }

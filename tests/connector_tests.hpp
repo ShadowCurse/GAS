@@ -13,24 +13,24 @@
 using namespace gas;
 
 TEST(Connector, set_settings) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   EXPECT_EQ(settings, connector.get_settings());
 }
 
 TEST(Connector, connect) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
@@ -38,12 +38,12 @@ TEST(Connector, connect) {
 }
 
 TEST(Connector, disconnect) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
@@ -53,12 +53,12 @@ TEST(Connector, disconnect) {
 }
 
 TEST(Connector, empty_query_fail) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
@@ -69,12 +69,12 @@ TEST(Connector, empty_query_fail) {
 }
 
 TEST(Connector, error_query_fail) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_EQ(connector.connect(), true);
@@ -85,12 +85,12 @@ TEST(Connector, error_query_fail) {
 }
 
 TEST(Connector, select_pass) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
@@ -105,12 +105,12 @@ TEST(Connector, select_pass) {
 }
 
 TEST(Connector, insert_pass) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
@@ -123,30 +123,30 @@ TEST(Connector, insert_pass) {
 }
 
 TEST(Connector, delete_pass) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
   ASSERT_TRUE(connector.connected());
 
-  auto query = User::remove_by_username( "test");
+  auto query = User::remove_by_username("test");
   auto res = connector.exec(query);
   ASSERT_EQ(static_cast<bool>(res), true);
   EXPECT_EQ((*res).size(), 0);
 }
 
 TEST(Connector, add_notifiers) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
@@ -177,12 +177,12 @@ TEST(Connector, add_notifiers) {
 }
 
 TEST(Connector, delete_notifiers) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
@@ -212,12 +212,12 @@ TEST(Connector, delete_notifiers) {
 }
 
 TEST(Connector, enable_notifiers) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_TRUE(connector.connect());
@@ -238,12 +238,12 @@ TEST(Connector, enable_notifiers) {
 }
 
 TEST(Connector, disable_notifications) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_EQ(connector.connect(), true);
@@ -266,12 +266,12 @@ TEST(Connector, disable_notifications) {
 }
 
 TEST(Connector, test_notifications) {
-  auto settings = Settings{}
-                      .host("localhost")
-                      .port(5432)
-                      .db_name("gas")
-                      .username("gas_admin")
-                      .password("password");
+  auto settings = Settings{};
+  settings.host = "localhost";
+  settings.port = 5432;
+  settings.db_name = "gas";
+  settings.username = "gas_admin";
+  settings.password = "password";
 
   Connector connector(settings);
   ASSERT_EQ(connector.connect(), true);
@@ -290,7 +290,7 @@ TEST(Connector, test_notifications) {
     auto res = connector.exec(query_insert);
     ASSERT_EQ(static_cast<bool>(res), true);
     EXPECT_EQ((*res).size(), 0);
-    auto query_delete = User::remove_by_username( "test");
+    auto query_delete = User::remove_by_username("test");
     auto res_d = connector.exec(query_delete);
     ASSERT_EQ(static_cast<bool>(res_d), true);
     EXPECT_EQ((*res_d).size(), 0);
