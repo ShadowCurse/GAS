@@ -3875,6 +3875,9 @@ QPushButton:checked {
                   <height>82</height>
                  </size>
                 </property>
+                <property name="text">
+                 <string>LoacalSorage</string>
+                </property>
                </widget>
               </item>
              </layout>
@@ -3925,6 +3928,9 @@ QPushButton:checked {
                   <height>82</height>
                  </size>
                 </property>
+                <property name="text">
+                 <string>localhost</string>
+                </property>
                </widget>
               </item>
              </layout>
@@ -3974,6 +3980,9 @@ QPushButton:checked {
                 </property>
                 <property name="maximum">
                  <number>9999999</number>
+                </property>
+                <property name="value">
+                 <number>5432</number>
                 </property>
                </widget>
               </item>
@@ -4028,6 +4037,9 @@ QPushButton:checked {
                   <height>82</height>
                  </size>
                 </property>
+                <property name="text">
+                 <string>gas</string>
+                </property>
                </widget>
               </item>
              </layout>
@@ -4074,6 +4086,9 @@ QPushButton:checked {
                   <width>172</width>
                   <height>82</height>
                  </size>
+                </property>
+                <property name="text">
+                 <string>gas_admin</string>
                 </property>
                </widget>
               </item>
@@ -4130,6 +4145,9 @@ QPushButton:checked {
                   <width>172</width>
                   <height>82</height>
                  </size>
+                </property>
+                <property name="text">
+                 <string>password</string>
                 </property>
                 <property name="echoMode">
                  <enum>QLineEdit::Password</enum>

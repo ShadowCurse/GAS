@@ -66,6 +66,8 @@ GasGui::GasGui(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
           &GasGui::slot_resource_click);
   connect(ui->commit_list, &QTreeWidget::itemClicked, this,
           &GasGui::slot_commit_click);
+  connect(ui->users_list, &QTreeWidget::itemClicked, this,
+          &GasGui::slot_user_click);
 
   // settings
   connect(ui->add_connection_button, &QPushButton::clicked, this,
@@ -89,7 +91,10 @@ void GasGui::slot_accept_user() {
   ui->main_window_tabs->setCurrentIndex(0);
   ui->tabWidget->setCurrentIndex(0);
 }
-void GasGui::slot_deny_user() {}
+
+void GasGui::slot_deny_user() {
+  emit log_error("invalid user");
+}
 
 void GasGui::slot_draw_resource_tree(
     GasGui::resource_tree_type resourece_tree) {

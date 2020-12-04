@@ -31,7 +31,7 @@ class Result {
         values.emplace_back(pack);
       }
     } catch (std::exception const &e) {
-      std::cerr << "Caught exception: " << e.what() << '\n';
+      std::cerr << "Result: cast caught exception: " << e.what() << '\n';
     }
     return values;
   }
@@ -62,7 +62,7 @@ class Connector {
         connection_ = std::make_unique<pqxx::connection>(settings_.to_string());
         if (!connection_->is_open()) return false;
       } catch (std::exception const &e) {
-        std::cerr << "Caught exception: " << e.what() << '\n';
+        std::cerr << "Connector: connect caught exception: " << e.what() << '\n';
         return false;
       }
     }

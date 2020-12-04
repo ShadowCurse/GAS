@@ -145,10 +145,13 @@ void GasCore::slot_create_resource_tree() {
 void GasCore::slot_create_commits_list() {
   commits_list_type list;
   auto commit_view = core_.create_view<gas::Commit>();
-  for (const auto& [storage_id, commit] : commit_view) {
-    list.push_back({{static_cast<id_type>(commit.id), storage_id},
-                    commit.date,
-                    commit.message});
+//  for (const auto& [storage_id, commit] : commit_view) {
+  auto commit{std::begin(commit_view)};
+  auto end{std::end(commit_view)};
+  for (; commit != end; ++commit) {
+    list.push_back({{static_cast<id_type>((*commit).second.id), (*commit).first},
+                    (*commit).second.date,
+                    (*commit).second.message});
   }
   emit signal_draw_commits_list(std::move(list));
 }

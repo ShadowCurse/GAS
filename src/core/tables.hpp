@@ -174,7 +174,7 @@ struct Commit {
   }
   [[nodiscard]] static auto select_all() {
     return commit_query(
-        "select id, user, resource, date, message from commits;");
+        "select id, \"user\", resource, date, message from commits;");
   }
 
   int id{};
