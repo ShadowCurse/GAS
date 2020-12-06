@@ -98,6 +98,7 @@ class GasGui final : public QMainWindow {
     std::string description;
     std::string file_path;
     std::string type;
+    std::string commit_message;
   };
 
   struct resource_download_type {

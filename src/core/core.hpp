@@ -21,7 +21,8 @@ class Core {
   auto disconnect_storage(StorageUnit::storage_id id) {
     return storage_.disconnect_storage(id);
   }
-  auto get_storage_settings(StorageUnit::storage_id id) -> std::optional<Settings> {
+  auto get_storage_settings(StorageUnit::storage_id id)
+      -> std::optional<Settings> {
     if (auto storage_unit = storage_.get_storage(id))
       return (*storage_unit)->get_settings();
     return std::nullopt;
@@ -65,26 +66,37 @@ class Core {
   }
   template <typename T>
   auto search_all(StorageUnit::storage_id storage_id,
-              StorageCache::search_fun<T> fun) -> std::vector<T> {
+                  StorageCache::search_fun<T> fun) -> std::vector<T> {
     if (auto storage_unit = storage_.get_storage(storage_id)) {
       return (*storage_unit)->search_all<T>(fun);
     }
     return {};
   }
 
-  auto insert_user(StorageUnit::storage_id storage_id, std::string_view username, std::string_view password,
-                   std::string_view email, std::string_view description) -> bool {
+  auto insert_user(StorageUnit::storage_id storage_id,
+                   std::string_view username, std::string_view password,
+                   std::string_view email, std::string_view description)
+      -> std::optional<User> {
     if (auto storage_unit = storage_.get_storage(storage_id)) {
       return (*storage_unit)
           ->insert_user(username, password, email, description);
     }
-    return false;
+    return std::nullopt;
   }
 
   auto search_user(StorageUnit::storage_id storage_id,
-                   std::string_view username, std::string_view password) {
+                   std::string_view username, std::string_view password)
+      -> std::optional<User> {
     if (auto storage_unit = storage_.get_storage(storage_id)) {
       return (*storage_unit)->search_user(username, password);
+    }
+    return std::nullopt;
+  }
+
+  auto search_user(StorageUnit::storage_id storage_id,
+                   std::string_view username) -> bool {
+    if (auto storage_unit = storage_.get_storage(storage_id)) {
+      return (*storage_unit)->search_user(username);
     }
     return false;
   }
@@ -102,16 +114,25 @@ class Core {
     }
   }
   auto update_resource(StorageUnit::storage_id storage_id, Resource& resource,
-                       std::string_view file_path) {
+                       std::string_view file_path) -> bool {
     if (auto storage_unit = storage_.get_storage(storage_id)) {
-      (*storage_unit)->update_resource(resource, file_path);
+      return (*storage_unit)->update_resource(resource, file_path);
     }
+    return false;
   }
   auto download_resource(StorageUnit::storage_id storage_id,
                          const Resource& resource, std::string_view file_path) {
     if (auto storage_unit = storage_.get_storage(storage_id)) {
       (*storage_unit)->download_resource(resource, file_path);
     }
+  }
+
+  auto insert_commit(StorageUnit::storage_id storage_id, const Commit& commit)
+      -> bool {
+    if (auto storage_unit = storage_.get_storage(storage_id)) {
+      return (*storage_unit)->insert(commit);
+    }
+    return false;
   }
 
  private:

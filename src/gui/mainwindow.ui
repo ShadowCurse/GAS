@@ -1169,7 +1169,7 @@ QSpinBox {
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_13">
                       <item>
-                       <widget class="QGroupBox" name="add_resource_name">
+                       <widget class="QGroupBox" name="add_resource_connetor_name">
                         <property name="title">
                          <string/>
                         </property>
@@ -1180,6 +1180,71 @@ QSpinBox {
                          <bool>true</bool>
                         </property>
                         <layout class="QHBoxLayout" name="horizontalLayout_27">
+                         <property name="spacing">
+                          <number>0</number>
+                         </property>
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QLabel" name="add_resource_connector_name_lable">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>172</width>
+                             <height>82</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Connector</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="add_resource_connector_name_value">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>172</width>
+                             <height>82</height>
+                            </size>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QGroupBox" name="add_resource_name">
+                        <property name="title">
+                         <string/>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                        <property name="flat">
+                         <bool>true</bool>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_47">
                          <property name="spacing">
                           <number>0</number>
                          </property>
@@ -1525,21 +1590,6 @@ QSpinBox {
                       <string/>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_14">
-                      <property name="spacing">
-                       <number>0</number>
-                      </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
                       <item>
                        <widget class="QGroupBox" name="update_resourece_name">
                         <property name="title">
@@ -1783,6 +1833,71 @@ QSpinBox {
                          </item>
                          <item>
                           <widget class="QLineEdit" name="update_resource_type_value">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>172</width>
+                             <height>82</height>
+                            </size>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QGroupBox" name="update_resource_commit_message">
+                        <property name="title">
+                         <string/>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                        <property name="flat">
+                         <bool>true</bool>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_52">
+                         <property name="spacing">
+                          <number>0</number>
+                         </property>
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QLabel" name="update_resource_commit_message_lablel">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>172</width>
+                             <height>82</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Commit message</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="update_resource_commit_message_value">
                            <property name="sizePolicy">
                             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                              <horstretch>0</horstretch>
@@ -3876,7 +3991,7 @@ QPushButton:checked {
                  </size>
                 </property>
                 <property name="text">
-                 <string>LoacalSorage</string>
+                 <string>LocalStorage</string>
                 </property>
                </widget>
               </item>

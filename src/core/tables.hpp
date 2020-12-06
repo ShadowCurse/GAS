@@ -30,6 +30,7 @@ struct Log {
 struct User {
   using user_query = Query<int, std::string, std::string, std::string>;
 
+  explicit User() = default;
   explicit User(
       const std::tuple<int, std::string, std::string, std::string> &args) {
     std::tie(id, username, email, description) = args;
@@ -47,17 +48,22 @@ struct User {
                                    std::string_view password,
                                    std::string_view email,
                                    std::string_view description) {
-    return no_return_query(fmt::format(
+    return user_query(fmt::format(
         "insert into users(username, password, email, description) values "
-        "('{}', crypt('{}', gen_salt('md5')), '{}', '{}');",
+        "('{}', crypt('{}', gen_salt('md5')), '{}', '{}') returning id, "
+        "username, email, description;",
         username, password, email, description));
   }
   [[nodiscard]] static auto search(std::string_view username,
                                    std::string_view password) {
+    return user_query(fmt::format(
+        "select id, username, email, description "
+        "from users where username = '{}' and password = crypt('{}', password)",
+        username, password));
+  }
+  [[nodiscard]] static auto search(std::string_view username) {
     return user_query(
-        fmt::format("select (password = crypt('{}', password)) AS pwd_match "
-                    "from users where username = '{}'",
-                    password, username));
+        fmt::format("select 1 from users where username = '{}'", username));
   }
   [[nodiscard]] static auto remove_by_id(int id) {
     return no_return_query(
@@ -168,6 +174,7 @@ struct Dependency {
 struct Commit {
   using commit_query = Query<int, int, int, std::string, std::string>;
 
+  explicit Commit() = default;
   explicit Commit(
       const std::tuple<int, int, int, std::string, std::string> &args) {
     std::tie(id, user, resource, date, message) = args;
@@ -175,6 +182,13 @@ struct Commit {
   [[nodiscard]] static auto select_all() {
     return commit_query(
         "select id, \"user\", resource, date, message from commits;");
+  }
+
+  [[nodiscard]] auto insert_query() const {
+    return no_return_query(
+        fmt::format("insert into commits(\"user\", resource, date, message) values "
+                    "('{}', '{}', (select current_date), '{}')",
+                    user, resource, message));
   }
 
   int id{};

@@ -99,22 +99,26 @@ void GasCore::slot_first_connect(GasCore::connector_info info) {
 }
 
 void GasCore::slot_first_login(GasCore::login_info info) {
-  if (core_.search_user(main_storage_, info.username, info.password))
+  if (auto result =
+          core_.search_user(main_storage_, info.username, info.password)) {
+    current_user = std::move(*result);
     emit signal_accept_user();
-  else
+  } else
     emit signal_deny_user();
 }
 
 void GasCore::slot_first_create_user(GasCore::create_user_info info) {
-  if (core_.search_user(main_storage_, info.username, info.password)) {
+  if (core_.search_user(main_storage_, info.username)) {
     emit signal_log_warning("such user already exists");
     emit signal_deny_user();
     return;
   } else {
-    if (core_.insert_user(main_storage_, info.username, info.password,
-                          info.email, info.description))
+    if (auto result =
+            core_.insert_user(main_storage_, info.username, info.password,
+                              info.email, info.description)) {
+      current_user = std::move(*result);
       emit signal_accept_user();
-    else {
+    } else {
       emit signal_log_error("can not create user");
       emit signal_deny_user();
     }
@@ -145,13 +149,14 @@ void GasCore::slot_create_resource_tree() {
 void GasCore::slot_create_commits_list() {
   commits_list_type list;
   auto commit_view = core_.create_view<gas::Commit>();
-//  for (const auto& [storage_id, commit] : commit_view) {
+  //  for (const auto& [storage_id, commit] : commit_view) {
   auto commit{std::begin(commit_view)};
   auto end{std::end(commit_view)};
   for (; commit != end; ++commit) {
-    list.push_back({{static_cast<id_type>((*commit).second.id), (*commit).first},
-                    (*commit).second.date,
-                    (*commit).second.message});
+    list.push_back(
+        {{static_cast<id_type>((*commit).second.id), (*commit).first},
+         (*commit).second.date,
+         (*commit).second.message});
   }
   emit signal_draw_commits_list(std::move(list));
 }
@@ -175,7 +180,6 @@ void GasCore::slot_create_logs_list() {
 }
 
 void GasCore::slot_send_resource_info(GasCore::item_id id) {
-  std::cout << "slot_send_resource_info\n";
   if (auto result = core_.search<gas::Resource>(
           id.storage_id,
           [&](const auto& res) { return res.id == id.item_id; })) {
@@ -237,16 +241,16 @@ void GasCore::slot_send_user_info(GasCore::item_id id) {
 }
 
 void GasCore::slot_add_new_resource(GasCore::resource_create_type info) {
-  gas::Resource resource;
-  resource.name = std::move(info.name);
-  resource.description = std::move(info.description);
   if (auto type = core_.search<gas::ResourceType>(
           info.connector_id,
-          [&](const auto& type) { return type.name == info.type; }))
+          [&](const auto& type) { return type.name == info.type; })) {
+    gas::Resource resource;
+    resource.name = std::move(info.name);
+    resource.description = std::move(info.description);
     resource.type = type->id;
-  else
+    core_.create_resource(info.connector_id, resource, info.file_path);
+  } else
     return;
-  core_.create_resource(info.connector_id, resource, info.file_path);
 }
 
 void GasCore::slot_update_resource(GasCore::resource_update_type info) {
@@ -261,7 +265,13 @@ void GasCore::slot_update_resource(GasCore::resource_update_type info) {
       old_res->type = type->id;
     else
       return;
-    core_.update_resource(info.id.storage_id, *old_res, info.file_path);
+    gas::Commit commit;
+    commit.user = current_user.id;
+    commit.resource = info.id.item_id;
+    commit.message = std::move(info.commit_message);
+    if (!core_.update_resource(info.id.storage_id, *old_res, info.file_path) ||
+        !core_.insert_commit(info.id.storage_id, commit))
+      emit signal_log_error("could not update resource");
   }
 }
 

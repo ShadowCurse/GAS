@@ -89,6 +89,7 @@ class GasCore final : public QObject {
   GasGui gui_;
   gas::Core core_;
   GasGui::id_type main_storage_{};
+  gas::User current_user;
 };
 
 #endif  // RESOURCE_TREE_H

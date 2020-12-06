@@ -93,17 +93,24 @@ class StorageUnit_T {
   }
 
   auto insert_user(std::string_view username, std::string_view password,
-                  std::string_view email, std::string_view description)
-      -> bool {
-    if (connector_.exec(User::insert(username, password, email, description)))
-      return true;
-    return false;
+                   std::string_view email, std::string_view description)
+      -> std::optional<User> {
+    if (auto result = connector_.exec(
+            User::insert(username, password, email, description)))
+      return result->template cast<User>()[0];
+    return std::nullopt;
   }
 
   auto search_user(std::string_view username, std::string_view password)
-      -> bool {
+      -> std::optional<User> {
     if (auto result = connector_.exec(User::search(username, password)))
-        if ((*result).size() != 0) return true;
+      if ((*result).size()) return result->template cast<User>()[0];
+    return std::nullopt;
+  }
+
+  auto search_user(std::string_view username) -> bool {
+    if (auto result = connector_.exec(User::search(username)))
+      if ((*result).size()) return true;
     return false;
   }
 
@@ -175,7 +182,8 @@ class View {
 
     static auto create_begin(view* views) {
       auto views_iter = std::begin(*views);
-      while (views_iter != std::end(*views) && std::empty((*views_iter).second)) {
+      while (views_iter != std::end(*views) &&
+             std::empty((*views_iter).second)) {
         ++views_iter;
       }
       data_iterator di{};
@@ -189,19 +197,19 @@ class View {
       return Iterator{views, std::end(*views), {}};
     }
 
-    friend auto operator==(const Iterator& first, const  Iterator& second) -> bool {
+    friend auto operator==(const Iterator& first, const Iterator& second)
+        -> bool {
       return first.current_view_iterator_ == second.current_view_iterator_;
     }
-    friend auto operator!=(const Iterator& first, const Iterator& second) -> bool {
+    friend auto operator!=(const Iterator& first, const Iterator& second)
+        -> bool {
       return !(first == second);
     }
 
     auto operator++() -> Iterator& {
       if (current_view_iterator_ != std::end(*views_)) {
-        if (current_data_iterator_ !=
-            std::prev(std::end((*current_view_iterator_).second))) {
-          ++current_data_iterator_;
-        } else {
+        if (++current_data_iterator_ ==
+            std::end((*current_view_iterator_).second)) {
           while (++current_view_iterator_ != std::end(*views_) &&
                  std::empty((*current_view_iterator_).second)) {
           }
@@ -244,9 +252,10 @@ class View {
   }
   [[nodiscard]] constexpr auto end() { return Iterator::create_end(&views_); }
   [[nodiscard]] constexpr auto size() const {
-    return std::accumulate(
-        std::begin(views_), std::end(views_), 0,
-        [](const auto& size, const auto& view) { return size + view.second.size(); });
+    return std::accumulate(std::begin(views_), std::end(views_), 0,
+                           [](const auto& size, const auto& view) {
+                             return size + view.second.size();
+                           });
   }
 
  private:

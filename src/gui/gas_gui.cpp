@@ -146,6 +146,11 @@ void GasGui::slot_draw_resource_info(GasGui::resource_info_type info) {
   ui->resource_size_value->setValue(info.size);
   ui->resource_type_value->setText(QString::fromStdString(info.type));
 
+  ui->update_resource_name_vaue->setText(QString::fromStdString(info.name));
+  ui->update_resource_description_value->setText(
+      QString::fromStdString(info.description));
+  ui->update_resource_type_value->setText(QString::fromStdString(info.type));
+
   ui->resource_commits->clear();
   for (const auto& commit : info.commits) {
     new QTreeWidgetItem(ui->resource_commits,
@@ -308,6 +313,10 @@ void GasGui::slot_tab_click(int index) {
 
 void GasGui::slot_add_new_resource() {
   resource_create_type info;
+  for (const auto& pair : connections_bar_ids) {
+    if (pair.first->text() == ui->add_resource_connector_name_value->text())
+      info.connector_id = pair.second;
+  }
   info.name = ui->add_resource_name_value->text().toStdString();
   info.description = ui->add_resource_description_value->text().toStdString();
   info.file_path = ui->add_resource_file_value->text().toStdString();
@@ -324,6 +333,7 @@ void GasGui::slot_update_resource() {
         ui->update_resource_description_value->text().toStdString();
     info.file_path = ui->update_resource_file_value->text().toStdString();
     info.type = ui->update_resource_type_value->text().toStdString();
+    info.commit_message = ui->update_resource_commit_message_value->text().toStdString();
     emit signal_update_resource(std::move(info));
   }
 }
