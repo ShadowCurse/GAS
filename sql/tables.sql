@@ -47,7 +47,7 @@ create table dependency
 create table commits
 (
     id       int generated always as identity primary key not null,
-    "user"     int                                          not null,
+    "user"   int                                          not null,
     resource int                                          not null,
     date     timestamp                                    not null,
     message  text,

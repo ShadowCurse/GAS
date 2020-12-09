@@ -32,13 +32,13 @@ begin
     then
         insert into logs (date, description)
         values ((select current_date), concat(lower(tg_op), ' resourcetype ', new.name));
-        notify gas_channel, 'user';
+        notify gas_channel, 'resourcetype';
         return new;
     elseif lower(tg_op) = 'delete'
     then
         insert into logs (date, description)
         values ((select current_date), concat(lower(tg_op), ' resourcetype ', old.name));
-        notify gas_channel, 'user';
+        notify gas_channel, 'resourcetype';
         return old;
     end if;
 end;
@@ -57,13 +57,13 @@ begin
     then
         insert into logs (date, description)
         values ((select current_date), concat(lower(tg_op), ' resource ', new.name));
-        notify gas_channel, 'user';
+        notify gas_channel, 'resource';
         return new;
     elseif lower(tg_op) = 'delete'
     then
         insert into logs (date, description)
         values ((select current_date), concat(lower(tg_op), ' resource ', old.name));
-        notify gas_channel, 'user';
+        notify gas_channel, 'resource';
         return old;
     end if;
 end;
@@ -82,13 +82,13 @@ begin
     then
         insert into logs (date, description)
         values ((select current_date), concat(lower(tg_op), ' dependency ', new.id));
-        notify gas_channel, 'user';
+        notify gas_channel, 'dependency';
         return new;
     elseif lower(tg_op) = 'delete'
     then
         insert into logs (date, description)
         values ((select current_date), concat(lower(tg_op), ' dependency ', old.id));
-        notify gas_channel, 'user';
+        notify gas_channel, 'dependency';
         return old;
     end if;
 end;
