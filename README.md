@@ -12,18 +12,18 @@ Currently db of choice is Postgresql.
 This is not finished by any means project. It is full of bugs and requires a lot of work to be completed.
 
 ## Instructions for build:
-To build this project you need dependencies and can be obtained with
+All needed dependencies can be obtained with
 [conan](https://docs.conan.io/en/latest/installation.html)
 
 Also gui part is using Qt 5.14
 
 Steps:
 ~~~~
-    $ git clone https://github.com/ShadowCurse/GAS.git
-    $ cd GAS
-    $ mkdir build && cd build
-    $ conan install .. --build=missing
-    $ make -j
+$ git clone https://github.com/ShadowCurse/GAS.git
+$ cd GAS
+$ mkdir build && cd build
+$ conan install .. --build=missing
+$ make -j
 ~~~~
 
 Also it worth mentioning that currently project is build with clang, so `conan` config should contain 
