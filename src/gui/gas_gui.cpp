@@ -391,8 +391,13 @@ void GasGui::slot_request_connector_settings() {
 }
 
 void GasGui::slot_request_connector_creation() {
+  auto connector_name = ui->connection_name_value->text();
+  for (const auto& pair: connections_bar_ids) {
+    if (pair.first->text() == connector_name)
+      log_error("connector with such name already exists");
+  }
   connector_info info;
-  info.name = ui->connection_name_value->text().toStdString();
+  info.name = connector_name.toStdString();
   info.host = ui->host_value->text().toStdString();
   info.port = ui->port_value->value();
   info.db_name = ui->db_name_value->text().toStdString();
@@ -402,6 +407,8 @@ void GasGui::slot_request_connector_creation() {
 }
 
 void GasGui::slot_request_connector_remove() {
-  auto caller = dynamic_cast<QPushButton*>(sender());
-  emit signal_request_connector_remove(connections_settings_ids[caller]);
+  for (const auto& setting_button : connections_settings_ids)
+    if (setting_button.first->isChecked()) {
+      emit signal_request_connector_remove(connections_settings_ids[setting_button.first]);
+    }
 }

@@ -19,7 +19,7 @@ class Core {
     return storage_.connect_storage(id);
   }
   auto disconnect_storage(StorageUnit::storage_id id) {
-    return storage_.disconnect_storage(id);
+    storage_.disconnect_storage(id);
   }
   auto get_storage_settings(StorageUnit::storage_id id)
       -> std::optional<Settings> {

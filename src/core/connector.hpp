@@ -111,7 +111,7 @@ class Connector {
     return Result<T...>(result);
   }
 
-  auto create_lo() -> oid {
+  auto create_lo() -> std::optional<oid> {
     try {
       pqxx::work work(*connection_);
       pqxx::largeobject lo(work);
@@ -120,6 +120,7 @@ class Connector {
     } catch (std::exception const &e) {
       std::cerr << "create_lo caught exception: " << e.what() << '\n';
     }
+    return std::nullopt;
   }
 
   auto remove_lo(oid oid) -> void {
@@ -133,7 +134,7 @@ class Connector {
     }
   }
 
-  auto upload_large_object(std::string_view file_path) -> oid {
+  auto upload_large_object(std::string_view file_path) -> std::optional<oid> {
     try {
       pqxx::work work(*connection_);
       pqxx::largeobjectaccess lo_new(work, file_path);
@@ -142,6 +143,7 @@ class Connector {
     } catch (std::exception const &e) {
       std::cerr << "upload_lo caught exception: " << e.what() << '\n';
     }
+    return std::nullopt;
   }
 
   auto download_large_object(uint oid, std::string_view file_path) -> void {

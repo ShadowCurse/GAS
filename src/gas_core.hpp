@@ -88,7 +88,7 @@ class GasCore final : public QObject {
  private:
   GasGui gui_;
   gas::Core core_;
-  GasGui::id_type main_storage_{};
+  GasGui::id_type main_storage_{0};
   gas::User current_user;
 };
 

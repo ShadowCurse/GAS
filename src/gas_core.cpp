@@ -78,23 +78,25 @@ GasCore::GasCore() : QObject() {
 }
 
 void GasCore::slot_first_connect(GasCore::connector_info info) {
-  gas::Settings settings;
-  settings.host = std::move(info.host);
-  settings.port = info.port;
-  settings.db_name = std::move(info.db_name);
-  settings.username = std::move(info.username);
-  settings.password = std::move(info.password);
+  if (!main_storage_) {
+    gas::Settings settings;
+    settings.host = std::move(info.host);
+    settings.port = info.port;
+    settings.db_name = std::move(info.db_name);
+    settings.username = std::move(info.username);
+    settings.password = std::move(info.password);
 
-  auto st = core_.add_storage(std::move(settings));
-  if (core_.connect_storage(st)) {
-    info.id = st;
-    main_storage_ = st;
-    emit signal_starting_connection_state_change(true);
-    emit signal_create_connector(std::move(info));
-  } else {
-    core_.remove_storage(st);
-    emit signal_starting_connection_state_change(false);
-    emit signal_log_error("can not connect to db: invalid settings");
+    auto st = core_.add_storage(std::move(settings));
+    if (core_.connect_storage(st)) {
+      info.id = st;
+      main_storage_ = st;
+      emit signal_starting_connection_state_change(true);
+      emit signal_create_connector(std::move(info));
+    } else {
+      core_.remove_storage(st);
+      emit signal_starting_connection_state_change(false);
+      emit signal_log_error("can not connect to db: invalid settings");
+    }
   }
 }
 
@@ -126,9 +128,10 @@ void GasCore::slot_first_create_user(GasCore::create_user_info info) {
 }
 
 void GasCore::slot_connector_state_change(GasCore::id_type id, bool state) {
-  if (state)
-    core_.connect_storage(id);
-  else
+  if (state) {
+    if (!core_.connect_storage(id))
+      emit signal_log_error("could not enable connection");
+  } else
     core_.disconnect_storage(id);
 }
 
@@ -200,12 +203,13 @@ void GasCore::slot_send_resource_info(GasCore::item_id id) {
         id.storage_id, [&](const auto& dependency) {
           return dependency.requesting_resource == result->id;
         });
-    auto resources = core_.create_view<gas::Resource>(id.storage_id);
-    for (const auto& dep : dependencies)
-      for (const auto& res : resources)
-        if (res.id == dep.required_resource)
-          info.dependencies.push_back(res.name);
-    emit signal_draw_resource_info(std::move(info));
+    if (auto resources = core_.create_view<gas::Resource>(id.storage_id)) {
+      for (const auto& dep : dependencies)
+        for (const auto& res : *resources)
+          if (res.id == dep.required_resource)
+            info.dependencies.push_back(res.name);
+      emit signal_draw_resource_info(std::move(info));
+    }
   }
 }
 
@@ -310,10 +314,20 @@ void GasCore::slot_create_connector(GasCore::connector_info info) {
   settings.username = std::move(info.username);
   settings.password = std::move(info.password);
   auto storage = core_.add_storage(std::move(settings));
-  info.id = storage;
-  emit signal_create_connector(std::move(info));
+  if (core_.connect_storage(storage)) {
+    info.id = storage;
+    emit signal_create_connector(std::move(info));
+  } else {
+    core_.remove_storage(storage);
+    emit signal_log_error("can not create connector: can not connect");
+  }
 }
 
 void GasCore::slot_remove_connector(GasCore::id_type id) {
-  core_.remove_storage(id);
+  if (id == main_storage_)
+    emit signal_log_warning("can not remove main connector");
+  else {
+    core_.remove_storage(id);
+    emit signal_remove_connector(id);
+  }
 }

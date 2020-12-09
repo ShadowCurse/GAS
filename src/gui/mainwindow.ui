@@ -3476,6 +3476,9 @@ QSpinBox {
                                    <height>82</height>
                                   </size>
                                  </property>
+                                 <property name="echoMode">
+                                  <enum>QLineEdit::Password</enum>
+                                 </property>
                                 </widget>
                                </item>
                               </layout>
@@ -4669,6 +4672,9 @@ QPushButton::hover {
                    <width>172</width>
                    <height>82</height>
                   </size>
+                 </property>
+                 <property name="echoMode">
+                  <enum>QLineEdit::Password</enum>
                  </property>
                 </widget>
                </item>

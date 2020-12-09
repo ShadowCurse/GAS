@@ -117,10 +117,12 @@ class StorageUnit_T {
   auto create_resource(Resource& resource, std::string_view file_path) -> bool {
     if (not std::filesystem::exists(file_path)) return false;
     auto size = std::filesystem::file_size(file_path);
-    auto lo_oid = connector_.upload_large_object(file_path);
-    resource.data = lo_oid;
-    resource.size = size;
-    return insert(resource);
+    if (auto lo_oid = connector_.upload_large_object(file_path)) {
+      resource.data = *lo_oid;
+      resource.size = size;
+      return insert(resource);
+    } else
+      return false;
   }
   auto remove_resource(const Resource& resource) -> bool {
     connector_.remove_lo(resource.data);
@@ -130,10 +132,12 @@ class StorageUnit_T {
     if (not std::filesystem::exists(file_path)) return false;
     connector_.remove_lo(resource.data);
     auto size = std::filesystem::file_size(file_path);
-    auto lo_oid = connector_.upload_large_object(file_path);
-    resource.data = lo_oid;
-    resource.size = size;
-    return update(resource);
+    if (auto lo_oid = connector_.upload_large_object(file_path)) {
+      resource.data = *lo_oid;
+      resource.size = size;
+      return update(resource);
+    } else
+      return false;
   }
   auto download_resource(const Resource& resource, std::string_view file_path) {
     connector_.download_large_object(resource.data, file_path);
@@ -242,7 +246,8 @@ class View {
   explicit View(const std::map<StorageUnit::storage_id,
                                std::shared_ptr<StorageUnit>>& storages) {
     for (const auto& [id, storage] : storages) {
-      views_.insert({id, storage->create_view<T>()});
+      if (storage->connected())
+        views_.insert({id, storage->create_view<T>()});
     }
   }
 
@@ -296,8 +301,9 @@ class Storage {
     return View<T>{storages_};
   };
   template <typename T>
-  [[nodiscard]] auto create_view(StorageUnit::storage_id id) {
+  [[nodiscard]] auto create_view(StorageUnit::storage_id id) -> std::optional<CacheView<T>> {
     if (storages_.contains(id)) return storages_[id]->create_view<T>();
+    else return std::nullopt;
   };
 
   auto update() -> void {
@@ -305,7 +311,7 @@ class Storage {
   }
 
  private:
-  StorageUnit::storage_id id_counter{0};
+  StorageUnit::storage_id id_counter{1};
   std::map<StorageUnit::storage_id, std::shared_ptr<StorageUnit>> storages_;
 };
 
