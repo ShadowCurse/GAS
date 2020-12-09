@@ -106,9 +106,9 @@ TEST(StorageUnit, search) {
   ASSERT_TRUE(su.connected());
   EXPECT_TRUE(su.update_all());
   auto user1 = su.search<User>(
-      [](const auto& user) { return user.username == "name1"; });
+      [](const auto& user) { return user.username == "user1"; });
   EXPECT_TRUE(user1);
-  EXPECT_EQ((*user1).username, "name1");
+  EXPECT_EQ((*user1).username, "user1");
   EXPECT_EQ((*user1).email, "email1");
   EXPECT_EQ((*user1).description, "description1");
   su.disconnect();
@@ -127,11 +127,11 @@ TEST(StorageUnit, insert_item) {
   ASSERT_TRUE(su.connect());
   ASSERT_TRUE(su.connected());
   EXPECT_TRUE(su.update_all());
-  ResourceType rt({5, "test_resource_type"});
+  ResourceType rt({0, "test_resource_type"});
   EXPECT_TRUE(su.insert(rt));
   auto rt_s = su.search<ResourceType>(
       [](const auto& rt) { return rt.name == "test_resource_type"; });
-  EXPECT_TRUE(rt_s);
+  ASSERT_TRUE(rt_s);
   EXPECT_EQ((*rt_s).name, "test_resource_type");
   su.disconnect();
   ASSERT_FALSE(su.connected());
@@ -381,6 +381,7 @@ TEST(Storage, remove_storage) {
   EXPECT_TRUE(st.connect_storage(sid));
   EXPECT_TRUE((*storage)->connected());
   st.remove_storage(sid);
+  EXPECT_FALSE(st.get_storage(sid));
 }
 
 TEST(Storage, create_view) {

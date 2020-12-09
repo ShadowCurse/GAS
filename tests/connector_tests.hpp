@@ -119,7 +119,7 @@ TEST(Connector, insert_pass) {
   auto query = User::insert("test", "test", "test", "test");
   auto res = connector.exec(query);
   ASSERT_EQ(static_cast<bool>(res), true);
-  EXPECT_EQ((*res).size(), 0);
+  EXPECT_EQ((*res).size(), 1); // because user insert returns user
 }
 
 TEST(Connector, delete_pass) {
@@ -289,7 +289,7 @@ TEST(Connector, test_notifications) {
     auto query_insert = User::insert("test", "test", "test", "test");
     auto res = connector.exec(query_insert);
     ASSERT_EQ(static_cast<bool>(res), true);
-    EXPECT_EQ((*res).size(), 0);
+    EXPECT_EQ((*res).size(), 1);
     auto query_delete = User::remove_by_username("test");
     auto res_d = connector.exec(query_delete);
     ASSERT_EQ(static_cast<bool>(res_d), true);
