@@ -23,8 +23,11 @@ $ git clone https://github.com/ShadowCurse/GAS.git
 $ cd GAS
 $ mkdir build && cd build
 $ conan install .. --build=missing
+$ cmake ..
 $ make -j
 ~~~~
+
+Final binary will be in `build/bin`
 
 Also it worth mentioning that currently project is build with clang, so `conan` config should contain 
 ~~~~
